@@ -1,3 +1,2 @@
 TCBTheConversationBot
-create Test2
-Saparov Ogabek
+Shodiyorov Azimjon created test

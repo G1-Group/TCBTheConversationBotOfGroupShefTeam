@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCB.Aplication", "TCB.Aplication\TCB.Aplication.csproj", "{FBA9CFDA-ED80-46E7-A0DA-40D1C780FB4D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCB.Application", "TCB.Application\TCB.Application.csproj", "{FBA9CFDA-ED80-46E7-A0DA-40D1C780FB4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

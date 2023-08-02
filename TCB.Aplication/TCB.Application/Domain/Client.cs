@@ -1,6 +1,6 @@
 namespace TCB.Aplication.Domain;
 
-public class Client
+public class Client : ModelBase
 {
     public long ClientId { get; set; }
     public long UserId { get; set; }

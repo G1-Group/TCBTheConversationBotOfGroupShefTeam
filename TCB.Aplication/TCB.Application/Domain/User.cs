@@ -1,6 +1,6 @@
 namespace TCB.Aplication.Domain;
 
-public class User
+public class User : ModelBase
 {
     public long Id { get; set; }
     public long TelegramClientId { get; set; }

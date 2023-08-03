@@ -1,6 +1,6 @@
 namespace TCB.Aplication.Domain;
 
-public class Message_TCB:ModelBase
+public class MessageTCB:ModelBase
 {
     public long? ChatId { get; set; }
     public string text { get; set; }

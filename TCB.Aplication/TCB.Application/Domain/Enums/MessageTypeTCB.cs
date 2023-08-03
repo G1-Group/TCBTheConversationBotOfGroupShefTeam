@@ -1,6 +1,6 @@
 namespace TCB.Aplication.Domain;
 
-public enum MessageType
+public enum MessageTypeTCB
 {
     Board,
     AnonemChat

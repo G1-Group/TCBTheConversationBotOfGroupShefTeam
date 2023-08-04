@@ -1,3 +1,4 @@
+
 namespace TCB.Aplication.Domain;
 
 public class AnonemChat:ModelBase

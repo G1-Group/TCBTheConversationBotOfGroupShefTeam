@@ -138,7 +138,7 @@ public class BoardDataSarvice:DataProvider
     /// </summary>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public Board ReaderDataModel(NpgsqlDataReader reader)
+    private Board ReaderDataModel(NpgsqlDataReader reader)
     {
         return new Board()
         {

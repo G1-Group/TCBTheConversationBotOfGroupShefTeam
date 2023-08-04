@@ -12,6 +12,7 @@ public interface  IService<T>  where T : ModelBase
     public Task<T> Add(T data);
     
     
+    
     /// <summary>
     /// Delete Data from Sql
     /// </summary>

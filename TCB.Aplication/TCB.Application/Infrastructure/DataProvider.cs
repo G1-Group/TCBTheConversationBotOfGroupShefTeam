@@ -11,21 +11,21 @@ public class DataProvider
         _cannectionString = cannectionString;
     }
 
-    public NpgsqlConnection CreateNewNpgsqlConnection()
+    public NpgsqlConnection CreateConnection()
     {
         return new NpgsqlConnection(this._cannectionString);
     }
 
     public async Task<NpgsqlDataReader> ExecuteWithResult(string query, NpgsqlParameter[]? parameters)
     {
-        var connection = this.CreateNewNpgsqlConnection();
+        var connection = this.CreateConnection();
         await connection.OpenAsync();
 
-        var cammond = new NpgsqlCommand(query, connection);
-        if(cammond is not null)
-            cammond.Parameters.AddRange(parameters);
+        var command = new NpgsqlCommand(query, connection);
+        if(command is not null)
+            command.Parameters.AddRange(parameters);
 
-        var result =await cammond.ExecuteReaderAsync();
+        var result =await command.ExecuteReaderAsync();
 
 
         return result;
@@ -34,15 +34,15 @@ public class DataProvider
 
     public async Task<int> ExecuteNonResult(string query, NpgsqlParameter[]? parameters)
     {
-        var connection = this.CreateNewNpgsqlConnection();
+        var connection = this.CreateConnection();
 
         await connection.OpenAsync();
 
-        var cammond = new NpgsqlCommand(query, connection);
-        if(cammond is not null)
-            cammond.Parameters.AddRange(parameters);
+        var command = new NpgsqlCommand(query, connection);
+        if(command is not null)
+            command.Parameters.AddRange(parameters);
 
-        var result = await cammond.ExecuteNonQueryAsync();
+        var result = await command.ExecuteNonQueryAsync();
 
         return result;
     }

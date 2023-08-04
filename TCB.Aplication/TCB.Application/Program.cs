@@ -1,4 +1,7 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿
 
-Console.WriteLine("hh");
+
+using TCB.Aplication.Domain.Querys;
+
+Console.Write(QueryBoard.SelectQuery());
 

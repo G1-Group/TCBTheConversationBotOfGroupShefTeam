@@ -4,13 +4,43 @@ namespace TCB.Aplication.Services.Interface;
 
 public interface  IService<T>  where T : ModelBase
 {
-    public void Add(T data);
-    public void Delete(T data);
-
-    public void Update(T data);
-    public List<T> GetAllModel();
-    public T FindModel(long id);
-    public void AddRange(List<T> data);
+    /// <summary>
+    /// data Add from Sql
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    public Task<T> Add(T data);
+    
+    
+    /// <summary>
+    /// Delete Data from Sql
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    public Task<T> Delete(T data);
+    
+    /// <summary>
+    /// Update data from Sql
+    /// </summary>
+    /// <param name="Id"></param>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    public Task<T> Update(long Id,T data);
+    
+    
+    /// <summary>
+    /// Get All Data from Sql
+    /// </summary>
+    /// <returns></returns>
+    public Task<List<T>> GetAllModel();
+    
+    
+    /// <summary>
+    /// Find Data from Sql where Id equals
+    /// </summary>
+    /// <param name="Id"></param>
+    /// <returns></returns>
+    public Task<T> FindByIdModel(long Id);
     
  
 }

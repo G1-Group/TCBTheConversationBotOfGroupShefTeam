@@ -7,7 +7,7 @@ public static class QueryUser
     public static string SelectByIdQuery = $"SELECT * FROM SQL.User WHERE id = @p0";
     
     
-    public static string SelectByClientIdQuery = $"SELECT * FROM SQL.User WHERE client_id = @p1";
+    public static string SelectByUserIdQuery = $"SELECT * FROM SQL.User WHERE client_id = @p1";
     
     
     public static string SelectByPhoneNumberQuery = $"SELECT * FROM SQL.User WHERE phone_number = @p2";

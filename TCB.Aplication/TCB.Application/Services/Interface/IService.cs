@@ -4,14 +4,6 @@ namespace TCB.Aplication.Services.Interface;
 
 public interface  IService<T>  where T : ModelBase
 {
-    /// <summary>
-    /// data Add from Sql
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    public Task<T> Add(T data);
-    
-    
     
     /// <summary>
     /// Delete Data from Sql

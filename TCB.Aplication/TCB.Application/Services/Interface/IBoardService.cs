@@ -10,4 +10,17 @@ public interface IBoardService:IService<Board>
     /// <param name="nickName"></param>
     /// <returns></returns>
     public Task<Board> FindByNickNameModel(string nickName);
+
+
+
+    /// <summary>
+    /// Write to Message
+    /// </summary>
+    /// <param name="BoardId"></param>
+    /// <param name="messageTcb"></param>
+    /// <returns></returns>
+    public Task WriteMessageToBoard(long BoardId, MessageTCB messageTcb);
+
+
+    public Task<List<MessageTCB>> ReadMessageToBoard(long Id);
 }

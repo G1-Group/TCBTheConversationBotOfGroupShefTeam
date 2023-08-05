@@ -38,9 +38,9 @@ public class AuthService :  IAuthService
     
     public async Task<Client> Login(string phoneNumber , string password)
     {
-        var user = await _userDataService.FindByPassword(password);
+        var user = await _userDataService.FindByPassword(phoneNumber);
 
-        if (user.PhoneNumber == phoneNumber)
+        if (user.Password == password)
         {
             return await _clientDataService.FindByIdData(user.Id);
         }

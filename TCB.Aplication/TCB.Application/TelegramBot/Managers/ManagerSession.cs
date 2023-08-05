@@ -7,7 +7,7 @@ namespace TCB.Aplication.TelegramBot.Managers;
 public class ManagerSession:ISessionManager
 {
     private readonly UserDataService _userDataService;
-    public List<Session> Sessions { get; set; }
+    public List<Session> Sessions { get; set; } = new List<Session>();
 
     public ManagerSession(UserDataService userDataService)
     {
@@ -20,14 +20,22 @@ public class ManagerSession:ISessionManager
         if (user is not null)
             throw new Exception(" Not Found");
 
-        Session session = new Session()
+        
+        var Session1 = Sessions.FindLast(x => x.User.Id== user.Id);
+        if (Session1 is null)
         {
-            User = user,
-            Id = user.TelegramClientId,
+            var session = new Session()
+            {
+                User = user,
+                Action = null,
+                Controller = null,
+                Id = 0
+            };
+            Sessions.Add(session);
+            return session;
+        }
 
-        };
-        Sessions.Add(session);
-        return session;
+        return Session1;
     }
 
 

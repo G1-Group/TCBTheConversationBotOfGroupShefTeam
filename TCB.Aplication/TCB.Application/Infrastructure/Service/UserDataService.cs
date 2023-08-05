@@ -7,7 +7,7 @@ using TCB.Aplication.Infrastructure.Service.Interface;
 
 namespace TCB.Aplication.Infrastructure.Service;
 
-public class UserDataService : DataProvider 
+public class UserDataService : DataProvider
 {
     public UserDataService(string cannectionString) 
         : base(cannectionString)

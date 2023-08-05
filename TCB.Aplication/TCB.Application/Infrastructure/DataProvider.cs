@@ -22,12 +22,11 @@ public class DataProvider
         await connection.OpenAsync();
 
         var command = new NpgsqlCommand(query, connection);
-        if(command is not null)
+        if(parameters is not null)
             command.Parameters.AddRange(parameters);
 
         var result =await command.ExecuteReaderAsync();
-
-
+        
         return result;
 
     }

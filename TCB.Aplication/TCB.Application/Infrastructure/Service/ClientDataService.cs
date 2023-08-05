@@ -142,7 +142,7 @@ public class ClientDataService : DataProvider
             UserId = reader.GetInt64(1),
             TelegramChatId = reader.GetInt64(2),
             NickName = reader.GetString(3),
-            //Status = reader.GetChars(4,""),
+            //Status = reader.GetChars(4),
             IsPremium = reader.GetBoolean(5),
             ClientInAnonymChat = reader.GetBoolean(6)
             

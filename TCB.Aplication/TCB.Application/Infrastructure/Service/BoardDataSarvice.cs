@@ -7,7 +7,7 @@ using TCB.Aplication.Infrastructure.Service.Interface;
 
 namespace TCB.Aplication.Infrastructure.Service;
 
-public class BoardDataSarvice:DataProvider
+public class BoardDataSarvice:DataProvider,IBoardDataService
 {
     
     public BoardDataSarvice(string cannectionString) : base(cannectionString)

@@ -27,9 +27,7 @@ public class ManagerSession:ISessionManager
             var session = new Session()
             {
                 User = user,
-                Action = null,
-                Controller = null,
-                Id = 0
+                Id = user.TelegramClientId,
             };
             Sessions.Add(session);
             return session;

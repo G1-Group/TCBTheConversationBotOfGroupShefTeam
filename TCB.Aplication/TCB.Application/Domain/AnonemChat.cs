@@ -1,7 +1,7 @@
 
 namespace TCB.Aplication.Domain;
 
-public class AnonemChat:ModelBase
+public class AnonymChat:ModelBase
 {
     public DateTime CreateData { get; set; }
     public long ClientFromId { get; set; }

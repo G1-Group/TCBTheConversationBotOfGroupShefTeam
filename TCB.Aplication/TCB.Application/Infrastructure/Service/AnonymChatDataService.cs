@@ -13,7 +13,7 @@ public class AnonymChatDataService:DataProvider
     }
     
     
-    public async Task<AnonemChat> CreateData(AnonemChat data)
+    public async Task<AnonymChat> CreateData(AnonymChat data)
     {
         var result = await this.ExecuteNonResult(QueryAnonymChat.InsertQuery, new NpgsqlParameter[]
         {
@@ -29,7 +29,7 @@ public class AnonymChatDataService:DataProvider
         return await FindByIdData(data.Id);
     }
 
-    public async Task<AnonemChat> UpdateData(long Id, AnonemChat data)
+    public async Task<AnonymChat> UpdateData(long Id, AnonymChat data)
     {
         var result = await ExecuteNonResult(QueryAnonymChat.UpdateQuery, new NpgsqlParameter[]
         {
@@ -42,30 +42,30 @@ public class AnonymChatDataService:DataProvider
         return await FindByIdData(Id);
     }
 
-    public async Task<List<AnonemChat>> GetAllData()
+    public async Task<List<AnonymChat>> GetAllData()
     {
         var reader = await ExecuteWithResult(QueryAnonymChat.SelectQuery, null);
-        List<AnonemChat> chats = new List<AnonemChat>();
+        List<AnonymChat> chats = new List<AnonymChat>();
         while (reader.Read())
             chats.Add(ReaderDataModel(reader));
         return chats;
     }
 
-    public async Task<AnonemChat> FindByIdData(long Id)
+    public async Task<AnonymChat> FindByIdData(long Id)
     {
         var reader = await ExecuteWithResult(QueryAnonymChat.SelectByIdQuery, new NpgsqlParameter[]
         {
             new NpgsqlParameter("@p0",Id)
         });
-        System.Collections.Generic.IList<AnonemChat> chats = new List<AnonemChat>();
+        System.Collections.Generic.IList<AnonymChat> chats = new List<AnonymChat>();
         while (reader.Read())
             chats.Add(ReaderDataModel(reader));
         return chats.FirstOrDefault();
     }
 
-    public async Task<AnonemChat> DeleteData(long Id)
+    public async Task<AnonymChat> DeleteData(long Id)
     {
-        AnonemChat chat = await FindByIdData(Id);
+        AnonymChat chat = await FindByIdData(Id);
         var result = await ExecuteNonResult(QueryAnonymChat.DeleteQuery, new NpgsqlParameter[]
         {
             new NpgsqlParameter("@p0", chat.Id)
@@ -73,25 +73,25 @@ public class AnonymChatDataService:DataProvider
         return chat;
     }
 
-    public async Task<AnonemChat> FindByFromIdOrClientId(long Id)
+    public async Task<AnonymChat> FindByFromIdOrClientId(long Id)
     {
         var reader = await ExecuteWithResult(QueryAnonymChat.SelectByIdQuery, new NpgsqlParameter[]
         {
             new NpgsqlParameter("@p1",Id)
         });
-        List<AnonemChat> chats = new List<AnonemChat>();
+        List<AnonymChat> chats = new List<AnonymChat>();
         while (reader.Read())
             chats.Add(ReaderDataModel(reader));
         return chats.FirstOrDefault();
     }
 
-    public async Task<AnonemChat> FindByStatus(int role)
+    public async Task<AnonymChat> FindByStatus(int role)
     {
         var reader = await ExecuteWithResult(QueryAnonymChat.SelectByIdQuery, new NpgsqlParameter[]
         {
             new NpgsqlParameter("@p3",role)
         });
-        List<AnonemChat> chats = new List<AnonemChat>();
+        List<AnonymChat> chats = new List<AnonymChat>();
         while (reader.Read())
             chats.Add(ReaderDataModel(reader));
         return chats.FirstOrDefault();
@@ -99,9 +99,9 @@ public class AnonymChatDataService:DataProvider
 
 
 
-    private AnonemChat ReaderDataModel(NpgsqlDataReader reader)
+    private AnonymChat ReaderDataModel(NpgsqlDataReader reader)
     {
-        return new AnonemChat()
+        return new AnonymChat()
         {
             Id = reader.GetInt64(0),
             ClientFromId = reader.GetInt64(1),

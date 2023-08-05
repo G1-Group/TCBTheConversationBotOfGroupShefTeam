@@ -2,8 +2,8 @@ using TCB.Aplication.Domain;
 
 namespace TCB.Aplication.Infrastructure.Service.Interface;
 
-public interface IDataServiceAnonymChat:IDataSarvice<AnonemChat>
+public interface IDataServiceAnonymChat:IDataSarvice<AnonymChat>
 {
-    public Task<AnonemChat> FindByFromIdOrClientId(long Id);
-    public Task<AnonemChat> FindByStatus(int role);
+    public Task<AnonymChat> FindByFromIdOrClientId(long Id);
+    public Task<AnonymChat> FindByStatus(int role);
 }

@@ -28,7 +28,7 @@ public static class MessageTCBQuery
 
     public static string InsertQuery()
     {
-        return $"Insert into \"Telegrambot\".MessageTCB (id,text,from_id,time,board_id) values (@p0,@p1,@p2,@p3,@p4)";
+        return $"Insert into \"Telegrambot\".MessageTCB ( id ,from_id , board_id , chat_id,text, time , status ,message_status) values (@p,@p1,@p2,@p3,@p4,@p5,@p6,@p7)";
     }
 
 
@@ -37,7 +37,7 @@ public static class MessageTCBQuery
 
     public static string UpdateQuery()
     {
-        return $"UPDATE \"Telegrambot\".MessageTCB SET text=@p1 , from_id = @p2 , time = @p3 , board_id = @p4  WHERE id = @p0 ;";
+        return $"UPDATE \"Telegrambot\".MessageTCB SET from_id = @p1 , board_id = @p2 , chat_id = @p3 ,text = @p4 , time = @p5 , status=@p6 ,message_status=@p7  WHERE id = @p0 ;";
     }
 
     

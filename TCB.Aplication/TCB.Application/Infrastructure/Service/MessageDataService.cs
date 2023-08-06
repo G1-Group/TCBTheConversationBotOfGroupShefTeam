@@ -12,6 +12,7 @@ public class MessageDataService : DataProvider,IMessageDataService
 {
     public MessageDataService(string cannectionString) : base(cannectionString)
     {
+        
     }
 
     public async Task<Message> CreateData(Message data)

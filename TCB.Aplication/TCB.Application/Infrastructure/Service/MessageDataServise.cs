@@ -1,16 +1,15 @@
-using System.Data;
 using Npgsql;
 using TCB.Aplication.DataProviderFolder;
 using TCB.Aplication.Domain;
 using TCB.Aplication.Domain.Querys;
 using TCB.Aplication.Infrastructure.Service.Interface;
-using TCB.Aplication.Domain;
 
 namespace TCB.Aplication.Infrastructure.Service;
 
-public class MessageDataService : DataProvider,IMessageDataService
+public class MessageDataServise : DataProvider,IMessageDataService
 {
-    public MessageDataService(string cannectionString) : base(cannectionString)
+
+    public MessageDataServise(string cannectionString) : base(cannectionString)
     {
         
     }
@@ -25,9 +24,11 @@ public class MessageDataService : DataProvider,IMessageDataService
             new NpgsqlParameter("@p3",data.chatId),
             new NpgsqlParameter("@p4",data.message),
             new NpgsqlParameter("@p5",data.time),
-            new NpgsqlParameter("@p6",data.status)
+            new NpgsqlParameter("@p6",data.status),
+            new NpgsqlParameter("@p7", data.messageStatus)
 
-        });
+        }); 
+        
         return await FindByIdData(data.Id);
     }
 
@@ -41,11 +42,12 @@ public class MessageDataService : DataProvider,IMessageDataService
             new NpgsqlParameter("@p3", message.chatId),
             new NpgsqlParameter("@p4", message.message),
             new NpgsqlParameter("@p5", message.time),
-            new NpgsqlParameter("@p6", message.status)
-        });
+            new NpgsqlParameter("@p6", message.status),
+            new NpgsqlParameter("@p7", message.messageStatus)
+        }); 
+        
         return await FindByIdData(message.Id);
     }
-
     public async Task<int> InsertMessage(Message message)
     {
         return await this.ExecuteNonResult(QueryMessage.InsertQuery(), new NpgsqlParameter[]
@@ -56,10 +58,11 @@ public class MessageDataService : DataProvider,IMessageDataService
             new NpgsqlParameter("@p3", message.chatId),
             new NpgsqlParameter("@p4", message.message),
             new NpgsqlParameter("@p5", message.time),
-            new NpgsqlParameter("@p6", message.status)
+            new NpgsqlParameter("@p6", message.status),
+            new NpgsqlParameter("@p7", message.messageStatus)
         });
     }
-
+    
 
     public async Task<List<Message>> GetAllData()
     {
@@ -68,16 +71,6 @@ public class MessageDataService : DataProvider,IMessageDataService
         while (reader.Read())
             resultMessages.Add(ReaderDataModel(reader));
         return resultMessages;
-    }
-    
-    public async Task<Message> DeleteData(long id)
-    {
-        Message message = await FintByFromId(id);
-        var resultMessage = await ExecuteNonResult(QueryMessage.DeleteQuery(), new NpgsqlParameter[]
-        {
-            new NpgsqlParameter("@p0", id)
-        });
-        return message;
     }
 
     public async Task<Message> FindByIdData(long id)
@@ -88,9 +81,21 @@ public class MessageDataService : DataProvider,IMessageDataService
         });
         List<Message> resulstMessages = new List<Message>();
         while (reader.Read())
+        {
             resulstMessages.Add(this.ReaderDataModel(reader));
-
+        }
+        
         return resulstMessages.FirstOrDefault();
+    }
+
+    public async Task<Message> DeleteData(long id)
+    {
+        Message message = await FintByFromId(id);
+        var resultMessage = await ExecuteNonResult(QueryMessage.DeleteQuery(), new NpgsqlParameter[]
+        {
+            new NpgsqlParameter("@p0", id)
+        });
+        return message;
     }
 
     public async Task<Message> FintByFromId(long fromId)
@@ -101,10 +106,13 @@ public class MessageDataService : DataProvider,IMessageDataService
         });
         List<Message> messages = new List<Message>();
         while (reader.Read())
-            messages.Add(ReaderDataModel(reader));
+        {
+            messages.Add(this.ReaderDataModel(reader));
+        }
+
         return messages.FirstOrDefault();
     }
-    
+
     public async Task<List<Message>> GetAllFindBoardId(long boardId)
     {
         var reader = await this.ExecuteWithResult(QueryMessage.SelectByBoardId(), new NpgsqlParameter[]
@@ -116,17 +124,16 @@ public class MessageDataService : DataProvider,IMessageDataService
         {
             resultMessages.Add(this.ReaderDataModel(reader));
         }
-
+        
         return resultMessages;
     }
-    
     
     private Message ReaderDataModel(NpgsqlDataReader reader)
     {
         
         return new Message()
         {
-
+    
             Id = reader.GetInt64(0),
             FromId = reader.GetInt64(1),
             BoardId = reader.GetInt64(2),
@@ -134,10 +141,8 @@ public class MessageDataService : DataProvider,IMessageDataService
             message = reader.GetString(4),
             time = reader.GetDateTime(5),
             status = (MessageType)reader.GetInt32(6),
+            messageStatus = (MessageStatus)reader.GetInt32(7)
         };
     }
     
 }
-
-
-

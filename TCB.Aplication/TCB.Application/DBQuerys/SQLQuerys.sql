@@ -48,4 +48,3 @@ create table "telegrambot".Message(
                                           board_id int,
 
 );
-e logs(id serial primary key,from_id bigint,to_id bigint,action varchar(100));

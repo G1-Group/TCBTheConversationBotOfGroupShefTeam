@@ -1,53 +1,60 @@
+using TCB.Aplication.Infrastructure.Service;
 using TCB.Aplication.Services;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using User = TCB.Aplication.Domain.User;
 
 namespace TCB.Aplication.TelegramBot.Managers;
 
 public class RegisterController : ControllerBase
 {
     private readonly ITelegramBotClient _botClient;
-    private readonly AnonymChatService _anonymChatService;
+    private readonly UserDataService _userDataService;
+
 
     public RegisterController(ITelegramBotClient botClient,
-        AnonymChatService anonymChatService) : base(botClient)
+        UserDataService userDataService) : base(botClient)
     {
         _botClient = botClient;
-        _anonymChatService = anonymChatService;
+        _userDataService = userDataService;
     }
 
-    public async  Task Initialize()
+    public async  Task Start(ControllerContext context)
     {
-        _botClient.StartReceiving(async (client, update, cancellationToken) =>
+        if (context.Update.Message.Type != MessageType.Text)
         {
-            if (update.Message.Type == MessageType.Text)
+            this.SendMessage(context, "Please select one below");
+            return;
+        }
+        switch (context.Update.Message.Text)
+        {
+            case "login":
             {
-                if (update.Message.Text == "/start")
-                {
-                    GetTokenRegister(update, cancellationToken);
-                }
-                else if(update.Message.Text == "Registration✍️")
-                {
-                    if (await ChekUserInDataBase(update, cancellationToken))
-                    {
-                        
-                    }
-                }
-                else if(update.Message.Text == "Login✍️")
-                {
-                    
-                }
+                context.Session.Action = "StartLogin";
+                this.SendMessage(context, "Enter password");
+                break;
             }
-        },(client, Exception, cancellationToken)=>
+            
+        }
+    }
+
+    private async Task StartLogin(ControllerContext context)
+    {
+        if (context.Update.Message.Type != MessageType.Text)
         {
             
-        });
+            return;
+        }
+
+        User user = await _userDataService.FindByUserId(context.Update.Message.Chat.Id);
+
     }
 
-    private async Task ChekUserInDataBase(Update update, CancellationToken cancellationToken)
+    private async Task ChekUserInDataBase(ControllerContext context)
     {
+        
         
     }
 

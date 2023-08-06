@@ -23,6 +23,8 @@ create table "telegrambot".Client (
 
 
 
+
+
 create table "telegrambot".Board (
                                      id serial primary key ,
                                      owner_id bigint references "telegrambot".Client(id),

@@ -8,4 +8,5 @@ public class Session
     public User User { get; set; }
     public string Action { get; set; }
     public string Controller { get; set; }
+    public Board board { get; set; }
 }

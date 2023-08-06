@@ -39,18 +39,22 @@ public class BoardController:ControllerBase
             }
             case "PrintAllBoards":
             {
+                PrintAllBoards(context);
                 break;
             }
             case "WriteMessageToBoard":
             {
+                WriteMessageToBoard(context);
                 break;
             }
             case "WriteMessageToBoardIf":
             {
+                WriteMessageToBoardIf(context);
                 break;
             }
             case "EnterNickName":
             {
+                EnterNickName(context);
                 break;
             }
             case "Back":

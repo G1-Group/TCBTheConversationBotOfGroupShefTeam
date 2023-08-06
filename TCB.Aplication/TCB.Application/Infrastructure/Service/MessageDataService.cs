@@ -8,7 +8,7 @@ using TCB.Aplication.Domain;
 
 namespace TCB.Aplication.Infrastructure.Service;
 
-public class MessageDataService:DataProvider,IMessageDataService
+public class MessageDataService : DataProvider,IMessageDataService
 {
     public MessageDataService(string cannectionString) : base(cannectionString)
     {
@@ -16,7 +16,7 @@ public class MessageDataService:DataProvider,IMessageDataService
 
     public async Task<Message> CreateData(Message data)
     {
-        var result = await this.ExecuteNonResult(MessageTCBQuery.InsertQuery(), new NpgsqlParameter[]
+        var result = await this.ExecuteNonResult(QueryMessage.InsertQuery(), new NpgsqlParameter[]
         {
             new NpgsqlParameter("@p0", data.Id),
             new NpgsqlParameter("@p1", data.FromId),
@@ -31,57 +31,105 @@ public class MessageDataService:DataProvider,IMessageDataService
         return await FindByIdData(data.Id);
     }
 
-    public async Task<Message> UpdateData(long Id, Message data)
+    public async Task<Message> UpdateData(long Id, Message message)
     {
-        var result = await this.ExecuteNonResult(MessageTCBQuery.UpdateQuery(), new NpgsqlParameter[]
+        var result = await this.ExecuteNonResult(QueryMessage.UpdateQuery(), new NpgsqlParameter[]
         {
-            new NpgsqlParameter("@p0", data.Id),
-            new NpgsqlParameter("@p1", data.FromId),
-            new NpgsqlParameter("@p2", data.BoardId),
-            new NpgsqlParameter("@p3", data.chatId),
-            new NpgsqlParameter("@p4", data.text),
-            new NpgsqlParameter("@p5", data.time),
-            new NpgsqlParameter("@p6", data.status),
-            new NpgsqlParameter("@p7", data.messageStatus)
+            new NpgsqlParameter("@p0", message.Id),
+            new NpgsqlParameter("@p1", message.FromId),
+            new NpgsqlParameter("@p2", message.BoardId),
+            new NpgsqlParameter("@p3", message.chatId),
+            new NpgsqlParameter("@p4", message.text),
+            new NpgsqlParameter("@p5", message.time),
+            new NpgsqlParameter("@p6", message.status),
+            new NpgsqlParameter("@p7", message.messageStatus)
         });
-        return await FindByIdData(data.Id);
+        return await FindByIdData(message.Id);
     }
+
+    public async Task<int> InsertMessage(Message message)
+    {
+        return await this.ExecuteNonResult(QueryMessage.InsertQuery(), new NpgsqlParameter[]
+        {
+            new NpgsqlParameter("@p0", message.Id),
+            new NpgsqlParameter("@p1", message.FromId),
+            new NpgsqlParameter("@p2", message.BoardId),
+            new NpgsqlParameter("@p3", message.chatId),
+            new NpgsqlParameter("@p4", message.text),
+            new NpgsqlParameter("@p5", message.time),
+            new NpgsqlParameter("@p6", message.status),
+            new NpgsqlParameter("@p7", message.messageStatus)
+        });
+    }
+
 
     public async Task<List<Message>> GetAllData()
     {
         var reader = await this.ExecuteWithResult(QueryBoard.SelectQuery(), null);
-        List<Message> messages = new List<Message>();
+        List<Message> resultMessages = new List<Message>();
         while (reader.Read())
-            messages.Add(ReaderDataModel(reader));
-        return messages;
+            resultMessages.Add(ReaderDataModel(reader));
+        return resultMessages;
+    }
+    
+    public async Task<Message> DeleteData(long id)
+    {
+        Message message = await FintByFromId(id);
+        var resultMessage = await ExecuteNonResult(QueryMessage.DeleteQuery(), new NpgsqlParameter[]
+        {
+            new NpgsqlParameter("@p0", id)
+        });
+        return message;
     }
 
-    public async Task<Message> FindByIdData(long Id)
+    public async Task<Message> FindByIdData(long id)
     {
-        throw new NotImplementedException();
+        var reader = await this.ExecuteWithResult(QueryMessage.SelectByIdQuery(),new NpgsqlParameter[]
+        {
+            new NpgsqlParameter("@p0", id)
+        });
+        List<Message> resulstMessages = new List<Message>();
+        while (reader.Read())
+        {
+            resulstMessages.Add(this.ReaderDataModel(reader));
+        }
+
+        return resulstMessages.FirstOrDefault();
     }
 
-    public async Task<Message> DeleteData(long Id)
+    public async Task<Message> FintByFromId(long fromId)
     {
-        throw new NotImplementedException();
-    }
+        var reader = await this.ExecuteWithResult(QueryMessage.SelectByFromId(), new NpgsqlParameter[]
+        {
+            new NpgsqlParameter("@p0", fromId)
+        });
+        Message message = new Message();
+        return message;
 
-    public async Task<Message> FintByFromId(long FromId)
-    {
-        throw new NotImplementedException();
-    }
 
-    public async Task<List<Message>> GetAllFindBoardId(long BoardId)
+    }
+    
+    public async Task<List<Message>> GetAllFindBoardId(long boardId)
     {
-        throw new NotImplementedException();
+        var reader = await this.ExecuteWithResult(QueryMessage.SelectQuery(), new NpgsqlParameter[]
+        {
+            new NpgsqlParameter("@p0", boardId)
+        });
+        List<Message> resultMessages = new List<Message>();
+        while (reader.Read())
+        {
+            resultMessages.Add(this.ReaderDataModel(reader));
+        }
+
+        return resultMessages;
     }
     
     
     private Message ReaderDataModel(NpgsqlDataReader reader)
     {
+        
         return new Message()
         {
-            //( id ,from_id , board_id , chat_id,text, time , status ,message_status) 
 
             Id = reader.GetInt64(0),
             FromId = reader.GetInt64(1),
@@ -89,10 +137,12 @@ public class MessageDataService:DataProvider,IMessageDataService
             chatId = reader.GetInt64(3),
             text = reader.GetString(4),
             time = reader.GetDateTime(5),
-            //status = (me)reader.GetInt32(6),
-            //messageStatus = reader.GetInt32(7)
+            status = (MessageType)reader.GetInt32(6),
+            messageStatus = (MessageStatus)reader.GetInt32(7)
         };
     }
     
-    
 }
+
+
+

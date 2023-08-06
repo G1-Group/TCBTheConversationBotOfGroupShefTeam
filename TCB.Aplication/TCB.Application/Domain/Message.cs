@@ -20,7 +20,7 @@ public class Message : ModelBase
     public long? chatId { get; set; }
     
     [Description("status")]
-    public MessageTypeTCB status { get; set; }
+    public MessageType status { get; set; }
     
     [Description("message_status")]
     public MessageStatus messageStatus { get; set; }

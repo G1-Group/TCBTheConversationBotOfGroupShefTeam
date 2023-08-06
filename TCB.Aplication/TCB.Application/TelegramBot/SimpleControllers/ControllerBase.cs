@@ -1,4 +1,5 @@
 using Telegram.Bot;
+using Telegram.Bot.Types.Enums;
 
 namespace TCB.Aplication.TelegramBot.Managers;
 
@@ -11,4 +12,15 @@ public abstract class ControllerBase
         _botClient = botClient;
     }
     public abstract void HandleAction(ControllerContext context);
+
+
+
+    public async Task SendMessage(ControllerContext context , string text)
+    {
+        _botClient.SendTextMessageAsync(
+            chatId: context.Update.Message.Chat.Id,
+            parseMode: ParseMode.Html,
+            text: text
+        );
+    }
 }

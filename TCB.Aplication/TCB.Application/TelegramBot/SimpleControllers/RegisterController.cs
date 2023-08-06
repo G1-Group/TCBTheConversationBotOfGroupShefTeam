@@ -1,3 +1,4 @@
+using TCB.Aplication.Services;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -8,10 +9,13 @@ namespace TCB.Aplication.TelegramBot.Managers;
 public class RegisterController : ControllerBase
 {
     private readonly ITelegramBotClient _botClient;
+    private readonly AnonymChatService _anonymChatService;
 
-    public RegisterController(ITelegramBotClient botClient) : base(botClient)
+    public RegisterController(ITelegramBotClient botClient,
+        AnonymChatService anonymChatService) : base(botClient)
     {
         _botClient = botClient;
+        _anonymChatService = anonymChatService;
     }
 
     public async  Task Initialize()
@@ -26,7 +30,10 @@ public class RegisterController : ControllerBase
                 }
                 else if(update.Message.Text == "Registration✍️")
                 {
-                    
+                    if (await ChekUserInDataBase(update, cancellationToken))
+                    {
+                        
+                    }
                 }
                 else if(update.Message.Text == "Login✍️")
                 {
@@ -37,6 +44,11 @@ public class RegisterController : ControllerBase
         {
             
         });
+    }
+
+    private async Task ChekUserInDataBase(Update update, CancellationToken cancellationToken)
+    {
+        
     }
 
     private async Task GetTokenRegister(Update update, CancellationToken cancellationToken)

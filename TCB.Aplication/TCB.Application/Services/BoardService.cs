@@ -7,12 +7,12 @@ namespace TCB.Aplication.Services;
 public class BoardService:IBoardService
 {
     private readonly BoardDataSarvice _boardDataSarvice;
-    private readonly MessageTCBDataService messageTcbDataService;
+    private readonly MessageDataService _messageDataService;
 
-    public BoardService(BoardDataSarvice boardDataSarvice,MessageTCBDataService messageTcbDataService)
+    public BoardService(BoardDataSarvice boardDataSarvice,MessageDataService messageDataService)
     {
         _boardDataSarvice = boardDataSarvice;
-        messageTcbDataService = messageTcbDataService;
+        messageDataService = messageDataService;
     }
     
     private async Task<Board> Add(Board data)
@@ -70,23 +70,23 @@ public class BoardService:IBoardService
         return await _boardDataSarvice.FindByNickName(nickName);
     }
 
-    public async Task WriteMessageToBoard(long BoardId, MessageTCB messageTcb)
+    public async Task WriteMessageToBoard(long BoardId, Message messageTcb)
     {
         if(messageTcb is null)
             return;
         messageTcb.messageStatus = MessageStatus.NoRead;
-        messageTcbDataService.CreateData(messageTcb);
+        _messageDataService.CreateData(messageTcb);
     }
 
-    public async Task<List<MessageTCB>> ReadMessageToBoard(long Id)
+    public async Task<List<Message>> ReadMessageToBoard(long Id)
     {
-        List<MessageTCB> messages= await messageTcbDataService.GetAllFindBoardId(Id);
+        List<Message> messages= await _messageDataService.GetAllFindBoardId(Id);
         if (messages is null)
             return null;
         foreach (var message in messages)
         {
             message.messageStatus = MessageStatus.Read;
-            messageTcbDataService.UpdateData(message.Id, message);
+            _messageDataService.UpdateData(message.Id, message);
         }
         return messages;
     }

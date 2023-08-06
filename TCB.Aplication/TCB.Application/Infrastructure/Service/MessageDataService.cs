@@ -4,16 +4,17 @@ using TCB.Aplication.DataProviderFolder;
 using TCB.Aplication.Domain;
 using TCB.Aplication.Domain.Querys;
 using TCB.Aplication.Infrastructure.Service.Interface;
+using TCB.Aplication.Domain;
 
 namespace TCB.Aplication.Infrastructure.Service;
 
-public class MessageTCBDataService:DataProvider,IMessageTCBDataService
+public class MessageDataService:DataProvider,IMessageDataService
 {
-    public MessageTCBDataService(string cannectionString) : base(cannectionString)
+    public MessageDataService(string cannectionString) : base(cannectionString)
     {
     }
 
-    public async Task<MessageTCB> CreateData(MessageTCB data)
+    public async Task<Message> CreateData(Message data)
     {
         var result = await this.ExecuteNonResult(MessageTCBQuery.InsertQuery(), new NpgsqlParameter[]
         {
@@ -30,7 +31,7 @@ public class MessageTCBDataService:DataProvider,IMessageTCBDataService
         return await FindByIdData(data.Id);
     }
 
-    public async Task<MessageTCB> UpdateData(long Id, MessageTCB data)
+    public async Task<Message> UpdateData(long Id, Message data)
     {
         var result = await this.ExecuteNonResult(MessageTCBQuery.UpdateQuery(), new NpgsqlParameter[]
         {
@@ -46,39 +47,39 @@ public class MessageTCBDataService:DataProvider,IMessageTCBDataService
         return await FindByIdData(data.Id);
     }
 
-    public async Task<List<MessageTCB>> GetAllData()
+    public async Task<List<Message>> GetAllData()
     {
         var reader = await this.ExecuteWithResult(QueryBoard.SelectQuery(), null);
-        List<MessageTCB> messages = new List<MessageTCB>();
+        List<Message> messages = new List<Message>();
         while (reader.Read())
             messages.Add(ReaderDataModel(reader));
         return messages;
     }
 
-    public async Task<MessageTCB> FindByIdData(long Id)
+    public async Task<Message> FindByIdData(long Id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<MessageTCB> DeleteData(long Id)
+    public async Task<Message> DeleteData(long Id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<MessageTCB> FintByFromId(long FromId)
+    public async Task<Message> FintByFromId(long FromId)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<List<MessageTCB>> GetAllFindBoardId(long BoardId)
+    public async Task<List<Message>> GetAllFindBoardId(long BoardId)
     {
         throw new NotImplementedException();
     }
     
     
-    private MessageTCB ReaderDataModel(NpgsqlDataReader reader)
+    private Message ReaderDataModel(NpgsqlDataReader reader)
     {
-        return new MessageTCB()
+        return new Message()
         {
             //( id ,from_id , board_id , chat_id,text, time , status ,message_status) 
 

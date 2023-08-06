@@ -5,7 +5,7 @@ namespace TCB.Aplication.Domain;
 
 public class AnonymChat:ModelBase
 {
-    [Description("create_time")]
+    [Description("time")]
     public DateTime CreateData { get; set; }
     
     [Description("from_id")]

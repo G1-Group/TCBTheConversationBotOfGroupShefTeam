@@ -8,12 +8,12 @@ public class Client : ModelBase
     public long UserId { get; set; }
     [Description("chat_id")]
     public long TelegramChatId { get; set; }
-    [Description("nickName")]
+    [Description("nick_name")]
     public string NickName { get; set; }
-    [Description("isPremium")]
+    [Description("is_premium")]
     public bool IsPremium { get; set; }
     [Description("status")]
     public ClientStatus Status { get; set; }
-    [Description("clientInAnonymChat")]
+    [Description("client_in_anonymChat")]
     public bool ClientInAnonymChat { get; set; } = false;
 }

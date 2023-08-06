@@ -10,7 +10,7 @@ public class Board:ModelBase
     [Description("owner_id")]
     public long OwnerId { get; set; }
     
-    [Description("messageTcbs")]
-    public List<MessageTCB> messageTcbs { get; set; }
+    [Description("messages")]
+    public List<Message> messages { get; set; }
 }
 

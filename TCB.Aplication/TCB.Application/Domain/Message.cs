@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace TCB.Aplication.Domain;
 
-public class MessageTCB : ModelBase
+public class Message : ModelBase
 {
     [Description("text")]
     public string text { get; set; }

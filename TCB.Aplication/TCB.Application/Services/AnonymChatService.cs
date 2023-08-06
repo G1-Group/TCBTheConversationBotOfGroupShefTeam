@@ -51,6 +51,7 @@ public class AnonymChatService : IAnonymChatService
 
     public Task<AnonymChat> FindByNickNameModel(string nickName)
     {
+        //todo add function find client us nickname in future;
         return null;
     }
 }

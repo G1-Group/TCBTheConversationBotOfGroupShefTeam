@@ -28,7 +28,7 @@ public class DataProvider
         var result =await command.ExecuteReaderAsync();
         
         return result;
-
+        
     }
 
     public async Task<int> ExecuteNonResult(string query, NpgsqlParameter[]? parameters)

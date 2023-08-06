@@ -19,8 +19,8 @@ public interface IBoardService:IService<Board>
     /// <param name="BoardId"></param>
     /// <param name="messageTcb"></param>
     /// <returns></returns>
-    public Task WriteMessageToBoard(long BoardId, MessageTCB messageTcb);
+    public Task WriteMessageToBoard(long BoardId, Message messageTcb);
 
 
-    public Task<List<MessageTCB>> ReadMessageToBoard(long Id);
+    public Task<List<Message>> ReadMessageToBoard(long Id);
 }

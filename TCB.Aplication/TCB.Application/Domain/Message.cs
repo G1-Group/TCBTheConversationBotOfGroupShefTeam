@@ -4,8 +4,8 @@ namespace TCB.Aplication.Domain;
 
 public class Message : ModelBase
 {
-    [Description("text")]
-    public string text { get; set; }
+    [Description("Message")]
+    public string message { get; set; }
     
     [Description("from_id")]
     public long? FromId { get; set; }
@@ -22,6 +22,4 @@ public class Message : ModelBase
     [Description("status")]
     public MessageType status { get; set; }
     
-    [Description("message_status")]
-    public MessageStatus messageStatus { get; set; }
 }

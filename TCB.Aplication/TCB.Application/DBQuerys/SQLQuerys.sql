@@ -42,6 +42,7 @@ create table if not exists "telegrambot".Message(
     id bigserial primary key ,
     message varchar(200),
     from_id bigint,
+    time date,
     chat_id bigint ,
     board_id bigint,
     message_status int

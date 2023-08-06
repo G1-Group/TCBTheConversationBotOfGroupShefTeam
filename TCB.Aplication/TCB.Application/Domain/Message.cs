@@ -21,5 +21,8 @@ public class Message : ModelBase
     
     [Description("status")]
     public MessageType status { get; set; }
+
+    [Description ("message_status")]
+    public MessageStatus messageStatus { get; set; }
     
 }

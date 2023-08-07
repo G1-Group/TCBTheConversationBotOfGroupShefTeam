@@ -12,12 +12,12 @@ public class RegisterController : ControllerBase
 {
     private readonly UserDataService _userDataService;
 
-    public RegisterController(ITelegramBotClient botClient , UserDataService userDataService) : base(botClient)
+    public RegisterController(ITelegramBotClient botClient , UserDataService userDataService, ControllerManager controllerManager) : base(botClient, controllerManager)
     {
         _userDataService = userDataService;
     }
 
-    public override void HandleAction(ControllerContext context)
+    public override bool HandleAction(ControllerContext context)
     {
         switch (context.Session.Action)
         {
@@ -38,10 +38,16 @@ public class RegisterController : ControllerBase
             }
             
         }
+
+        return true;
     }
 
-    
-    
+    public override bool HandleUpdate(ControllerContext context)
+    {
+        throw new NotImplementedException();
+    }
+
+
     public async Task Start(ControllerContext context)
     {
         SendMessage(context, "Enter your Phone Number✍️");
@@ -88,7 +94,7 @@ public class RegisterController : ControllerBase
             return;
         }
 
-        User user =await _userDataService.FindByUserId(context.Update.Message.Chat.Id);
+        User user =await _userDataService.FindByChatId(context.Update.Message.Chat.Id);
 
         if (user is  null)
         {

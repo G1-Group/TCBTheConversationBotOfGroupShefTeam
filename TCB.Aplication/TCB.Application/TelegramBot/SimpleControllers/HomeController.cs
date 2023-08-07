@@ -5,8 +5,9 @@ using Telegram.Bot.Types.Enums;
 
 namespace TCB.Aplication.TelegramBot.Managers;
 
-public class HomeController:ControllerBase
+public class HomeController : ControllerBase
 {
+    private readonly UserDataService _userDataService;
     private readonly BoardCreateController _boardCreateCintroller;
     private readonly BoardListAllBoard _boardListAllBoard;
     private readonly LoginController _loginController;
@@ -14,93 +15,117 @@ public class HomeController:ControllerBase
 
 
     public HomeController(ITelegramBotClient botClient,
-        BoardCreateController boardCreateCintroller,
-        BoardListAllBoard boardListAllBoard,
+        UserDataService userDataService,
         LoginController loginController,
-        RegisterController registerController,
-        UserDataService userDataService) : base(botClient)
+        ControllerManager controllerManager
+    ) : base(botClient, controllerManager)
     {
-        _boardCreateCintroller = boardCreateCintroller;
-        _boardListAllBoard = boardListAllBoard;
+        _userDataService = userDataService;
         _loginController = loginController;
-        _registerController = registerController;
     }
 
-    public override void HandleAction(ControllerContext context)
+    public override bool HandleAction(ControllerContext context)
     {
-        switch (context.Session.Controller)
+
+        switch (context.Session.Action)
         {
-            case "Login":
+            case nameof(this.Start):
             {
-                _loginController.HandleAction(context);
-                break;
-            }
-            case "Register":
-            {
-                _registerController.HandleAction(context);
-                break;
+                this.Start(context).Wait();
+                return true;
             }
             case "BoardListAllBorad":
             {
                 _boardListAllBoard.HandleAction(context);
-                break;
+                return true;
             }
             case "BoardCreate":
             {
                 _boardCreateCintroller.HandleAction(context);
-                break;
+                return true;
             }
-            default:
-            {
-                Home(context);
-                break;
-            }
+            
         }
+
+        return false;
     }
 
-    public async Task Home(ControllerContext context)
+    public override bool HandleUpdate(ControllerContext context)
     {
-        switch (context.Session.Action)
+        if (context.Update.Type != UpdateType.Message
+            || context.Update.Message?.Type != MessageType.Text)
+            return false;
+        var message = context.Update.Message;
+
+        switch (message.Text)
         {
-            case "LoginOrRegister":
+            case "/login":
             {
-                SendMessage(context, "Login >> /login\nRegister >> /register");
-                return;
+                context.Session.Controller = nameof(LoginController);
+                context.Session.Action = nameof(LoginController.LoginStepStart);
+
+                return false;
             }
-            default:
-                break;
-        }
-        
-        
-        if (context.Update.Message.Type != MessageType.Text)
-        {
-            Start(context);
-            return;
+            case "/start":
+            {
+                context.Session.Action = nameof(HomeController.Start);
+                return true;
+            }
         }
 
-        if (context.Update.Message.Text == "/CreateBoard")
-        {
-            context.Session.Controller = "BoardCreate";
-            _boardCreateCintroller.HandleAction(context);
-            return;
-        }
-
-        if (context.Update.Message.Text == "/ListAllBoard")
-        {
-            context.Session.Controller = "BoardListAllBorad";
-            _boardListAllBoard.HandleAction(context);
-            return;
-        }
-
-        Start(context);
-
+        return false;
     }
+    
+
+
+    public async Task Login(ControllerContext context)
+    {
+        context.Session.Controller = nameof(LoginController);
+        context.Session.Action = nameof(LoginController.LoginStepStart);
+        
+        this._loginController.HandleAction(context);
+    }
+
+    // public async Task Home(ControllerContext context)
+    // {
+    //     switch (context.Session.Action)
+    //     {
+    //         case "LoginOrRegister":
+    //         {
+    //             await SendMessage(context, "Login >> /login\nRegister >> /register");
+    //             return;
+    //         }
+    //         default:
+    //             await Start(context);
+    //             break;
+    //     }
+    //
+    //
+    //     if (context.Update.Message.Type != MessageType.Text)
+    //     {
+    //         Start(context);
+    //         return;
+    //     }
+    //
+    //     if (context.Update.Message.Text == "/CreateBoard")
+    //     {
+    //         context.Session.Controller = "BoardCreate";
+    //         _boardCreateCintroller.HandleAction(context);
+    //         return;
+    //     }
+    //
+    //     if (context.Update.Message.Text == "/ListAllBoard")
+    //     {
+    //         context.Session.Controller = "BoardListAllBorad";
+    //         _boardListAllBoard.HandleAction(context);
+    //         return;
+    //     }
+    //
+    //     Start(context);
+    // }
+
     public async Task Start(ControllerContext context)
     {
-        SendMessage(context, "Create Board >> /CreateBoard\nListAllBoard >> /ListAllBoard");
+        await SendMessage(context, "Create Board >> /CreateBoard\nListAllBoard >> /ListAllBoard");
     }
-    
-    
-    
-    
 }

@@ -6,15 +6,30 @@ namespace TCB.Aplication.TelegramBot.Managers;
 public abstract class ControllerBase
 {
     protected readonly ITelegramBotClient _botClient;
+    private readonly ControllerManager _controllerManager;
 
-    public ControllerBase(ITelegramBotClient botClient)
+    public ControllerBase(ITelegramBotClient botClient, ControllerManager controllerManager)
     {
         _botClient = botClient;
+        _controllerManager = controllerManager;
     }
-    public abstract void HandleAction(ControllerContext context);
+    public abstract bool HandleAction(ControllerContext context);
 
+    public abstract bool HandleUpdate(ControllerContext context);
 
+    public virtual void Handle(ControllerContext context)
+    {
+        var updateHandled = this.HandleUpdate(context);
 
+        if (!updateHandled)
+        {
+            var controllerBase = _controllerManager.GetControllerBySessionData(context.Session);
+            controllerBase.Handle(context);
+        }
+        else 
+            this.HandleAction(context);
+    }
+    
     public async Task SendMessage(ControllerContext context , string text)
     {
         _botClient.SendTextMessageAsync(

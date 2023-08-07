@@ -10,37 +10,61 @@ public class LoginController:ControllerBase
 {
     private readonly UserDataService _userDataService;
 
-    public LoginController(ITelegramBotClient botClient, UserDataService userDataService) : base(botClient)
+    private string userLogin = null;
+    private string userPassword = null;
+    public LoginController(ITelegramBotClient botClient, UserDataService userDataService, ControllerManager controllerManager) : base(botClient, controllerManager)
     {
         _userDataService = userDataService;
     }
 
-    public override void HandleAction(ControllerContext context)
+    public override bool HandleAction(ControllerContext context)
     {
         switch (context.Session.Action)
         {
-            case "GoBack":
+            case nameof(LoginStepStart):
             {
-                GoBack(context);
-                break;
+                LoginStepStart(context).Wait();
+                return true;
             }
-            case "Password":
+            case nameof(LoginStepFirst):
             {
-                Password(context);
-                break;
+                LoginStepFirst(context).Wait();
+                return true;
             }
-            case "PhoneNumber":
+            case nameof(LoginStepTwo):
             {
-                PhoneNumber(context);
-                break;
+                LoginStepTwo(context).Wait();
+                return true;
             }
-            default:
-            {
-                SendMessage(context, "/PhoneNumber or /GoBack");
-                Start(context);
-                break;
-            }
+            // case "GoBack":
+            // {
+            //     GoBack(context);
+            //     break;
+            // }
+            // case "Password":
+            // {
+            //     Password(context);
+            //     break;
+            // }
+            // case "PhoneNumber":
+            // {
+            //     PhoneNumber(context);
+            //     break;
+            // }
+            // default:
+            // {
+            //     SendMessage(context, "/PhoneNumber or /GoBack");
+            //     Start(context);
+            //     break;
+            // }
         }
+
+        return false;
+    }
+
+    public override bool HandleUpdate(ControllerContext context)
+    {
+        return true;
     }
 
     public async Task GoBack(ControllerContext context)
@@ -111,6 +135,42 @@ public class LoginController:ControllerBase
             context.Session.Action = "GoBack";
         }
         
+    }
+
+    public async Task LoginStepStart(ControllerContext context)
+    {
+        await SendMessage(context, "Enter your Login: ");
+
+        context.Session.Action = nameof(LoginStepFirst);
+    }
+    
+    public async Task LoginStepFirst(ControllerContext context)
+    {
+        context.Session.UserLogin = context.Update.Message?.Text;
+        
+        if (string.IsNullOrEmpty(context.Session.UserLogin))
+        {
+            await SendMessage(context, "Wrong login: ");
+            return;
+        }
+        await SendMessage(context, "Enter your password: ");
+        context.Session.Action = nameof(LoginStepTwo);
+    }
+
+    public async Task LoginStepTwo(ControllerContext context)
+    {
+        context.Session.UserPassword = context.Update.Message?.Text;
+        
+        if (string.IsNullOrEmpty(context.Session.UserPassword))
+        {
+            await SendMessage(context, "Wrong password: ");
+            return;
+        }
+        
+        await SendMessage(context, $"Login: {context.Session.UserLogin}\nPassword: {context.Session.UserPassword}");
+
+        context.Session.Controller = null;
+        context.Session.Action = null;
     }
 }
 

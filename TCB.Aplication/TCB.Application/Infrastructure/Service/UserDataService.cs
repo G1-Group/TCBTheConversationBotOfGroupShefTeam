@@ -80,7 +80,7 @@ public class UserDataService : DataProvider
     
     public async Task<User> DeleteData(long Id)
     {
-        User user = await FindByUserId(Id);
+        User user = await FindByIdData(Id);
 
         var result = await ExecuteWithResult(QueryUser.DeleteQuery, new NpgsqlParameter[]
         {
@@ -122,11 +122,11 @@ public class UserDataService : DataProvider
         return users.FirstOrDefault();
     }
 
-    public async Task<User> FindByUserId(long userId)
+    public async Task<User> FindByChatId(long chatId)
     {
-        var result = await ExecuteWithResult(QueryUser.SelectByUserIdQuery, new NpgsqlParameter[]
+        var result = await ExecuteWithResult(QueryUser.SelectByChatIdQuery, new NpgsqlParameter[]
         {
-            new NpgsqlParameter("@p1", userId),
+            new NpgsqlParameter("@p1", chatId),
         });
         List<User> users = new List<User>();
 

@@ -8,12 +8,10 @@ namespace TCB.Aplication.TelegramBot.Managers;
 
 public class LoginController:ControllerBase
 {
-    private readonly AuthService _authService;
     private readonly UserDataService _userDataService;
 
-    public LoginController(ITelegramBotClient botClient,AuthService authService , UserDataService userDataService) : base(botClient)
+    public LoginController(ITelegramBotClient botClient, UserDataService userDataService) : base(botClient)
     {
-        _authService = authService;
         _userDataService = userDataService;
     }
 

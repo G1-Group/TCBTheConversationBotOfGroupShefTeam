@@ -32,12 +32,12 @@ public class BoardController:ControllerBase
     {
         if (context.Update.Message.Type != MessageType.Text)
         {
-            await this.SendMessage(context, "There is an error Enter nickName?\nGo Back >> \\Back");
+            await this.SendMessage(context, "There is an error Enter nickName?\nGo Back >> /Back");
             return;
         }
 
         string nickName = context.Update.Message.Text;
-        if (nickName == "\\Back")
+        if (nickName == "/Back")
         {
             context.Session.Action = "Start";
             return;
@@ -45,7 +45,7 @@ public class BoardController:ControllerBase
 
         if (_boardService.FindByNickNameModel(nickName) is not null)
         {
-            await this.SendMessage(context, "This nickName is busy❌\nGo Back >> \\Back");
+            await this.SendMessage(context, "This nickName is busy❌\nGo Back >> /Back");
             return;
         }
 

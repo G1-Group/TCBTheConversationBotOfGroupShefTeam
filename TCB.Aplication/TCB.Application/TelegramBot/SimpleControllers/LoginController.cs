@@ -38,7 +38,7 @@ public class LoginController:ControllerBase
             }
             default:
             {
-                SendMessage(context, "\\PhoneNumber or \\GoBack");
+                SendMessage(context, "/PhoneNumber or /GoBack");
                 Start(context);
                 break;
             }
@@ -102,13 +102,13 @@ public class LoginController:ControllerBase
     public async Task Start(ControllerContext context)
     {
 
-        if (context.Update.Message.Text == "\\PhoneNumber")
+        if (context.Update.Message.Text == "/PhoneNumber")
         {
             await SendMessage(context, "Enter your Phone Number?");
             context.Session.Action = "PhoneNumber";
         }
 
-        if (context.Update.Message.Text == "\\GoBack")
+        if (context.Update.Message.Text == "/GoBack")
         {
             context.Session.Action = "GoBack";
         }

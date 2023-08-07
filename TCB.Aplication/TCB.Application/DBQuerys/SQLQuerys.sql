@@ -45,7 +45,8 @@ create table if not exists "telegrambot".Message(
     time date,
     chat_id bigint ,
     board_id bigint,
-    message_status int
+    message_status int,
+    status int
     );
 
 

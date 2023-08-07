@@ -33,7 +33,6 @@ public class BoardCreateController:ControllerBase
 
     public async Task Start(ControllerContext context)
     {
-        // ... Sobir 
         SendMessage(context, "Enter Your Nick Name!\n/GoBack");
         context.Session.Action = "NickName";
     }

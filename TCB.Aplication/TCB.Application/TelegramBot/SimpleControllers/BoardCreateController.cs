@@ -9,12 +9,12 @@ public class BoardCreateController:ControllerBase
 {
     private readonly BoardService _boardService;
 
-    public BoardCreateController(ITelegramBotClient botClient,BoardService boardService) : base(botClient)
+    public BoardCreateController(ITelegramBotClient botClient,BoardService boardService, ControllerManager controllerManager) : base(botClient, controllerManager)
     {
         _boardService = boardService;
     }
 
-    public override void HandleAction(ControllerContext context)
+    public override bool HandleAction(ControllerContext context)
     {
         switch (context.Session.Action)
         {
@@ -29,6 +29,13 @@ public class BoardCreateController:ControllerBase
                 break;
             }
         }
+
+        return true;
+    }
+
+    public override bool HandleUpdate(ControllerContext context)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task Start(ControllerContext context)
@@ -59,7 +66,7 @@ public class BoardCreateController:ControllerBase
             Start(context);
             return;
         }
-        _boardService.CreateBoard(board.NickName, context.Session.board.OwnerId);
+        // _boardService.CreateBoard(board.NickName, context.Session.board.OwnerId);
         context.Session.Action = null;
         context.Session.Controller = "HomeController";
     }

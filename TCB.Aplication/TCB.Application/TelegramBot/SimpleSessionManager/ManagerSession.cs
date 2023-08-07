@@ -16,24 +16,20 @@ public class ManagerSession:ISessionManager
 
     public async Task<Session> GetSessionByChatId(long chatId)
     {
-        User user = await _userDataService.FindByUserId(chatId);
-        if (user is not null)
-            throw new Exception(" Not Found");
-
-        
-        var Session1 = Sessions.FindLast(x => x.User.Id== user.Id);
-        if (Session1 is null)
+        User user = await _userDataService.FindByChatId(chatId);
+        var session = Sessions.Find(x => x.ChatId== chatId);
+        if (session is null)
         {
-            var session = new Session()
+            session = new Session()
             {
-                User = user,
-                Id = user.TelegramClientId,
+                Id = 1,
+                ChatId = chatId
             };
             Sessions.Add(session);
             return session;
         }
 
-        return Session1;
+        return session;
     }
 
 

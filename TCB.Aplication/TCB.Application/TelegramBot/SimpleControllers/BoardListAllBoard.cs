@@ -9,12 +9,12 @@ public class BoardListAllBoard:ControllerBase
 {
     private readonly BoardService _boardService;
 
-    public BoardListAllBoard(ITelegramBotClient botClient,BoardService boardService) : base(botClient)
+    public BoardListAllBoard(ITelegramBotClient botClient,BoardService boardService, ControllerManager controllerManager) : base(botClient, controllerManager)
     {
         _boardService = boardService;
     }
 
-    public override void HandleAction(ControllerContext context)
+    public override bool HandleAction(ControllerContext context)
     {
         switch (context.Session.Action)
         {
@@ -50,6 +50,13 @@ public class BoardListAllBoard:ControllerBase
                 break;
             }
         }
+
+        return true;
+    }
+
+    public override bool HandleUpdate(ControllerContext context)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task Start(ControllerContext context)
@@ -121,7 +128,7 @@ public class BoardListAllBoard:ControllerBase
             return;
         }
 
-        context.Session.board = board;
+        // context.Session.board = board;
         SendMessage(context, "Board to Writein");
         context.Session.Action = "Write";
       
@@ -137,17 +144,17 @@ public class BoardListAllBoard:ControllerBase
             return;
         }
 
-        await _boardService.WriteMessageToBoard(context.Session.board.Id,new Message()
-       {
-           message = context.Update.Message.Text,
-           time = DateTime.Now,
-           chatId = context.Update.Message.Chat.Id,
-           BoardId = context.Session.board.Id,
-           FromId = context.Update.Message.Chat.Id,
-           status = Domain.MessageType.Board
-       });
+        // await _boardService.WriteMessageToBoard(context.Session.board.Id,new Message()
+       // {
+       //     message = context.Update.Message.Text,
+       //     time = DateTime.Now,
+       //     chatId = context.Update.Message.Chat.Id,
+       //     BoardId = context.Session.board.Id,
+       //     FromId = context.Update.Message.Chat.Id,
+       //     status = Domain.MessageType.Board
+       // });
         
-        context.Session.board = null;
+        // context.Session.board = null;
         context.Session.Controller = "HomeController";
         context.Session.Action = null;
     }

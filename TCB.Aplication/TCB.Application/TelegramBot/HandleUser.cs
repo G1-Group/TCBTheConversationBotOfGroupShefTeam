@@ -29,7 +29,7 @@ public class HandleUser
             return;
         }
         
-        User user = await _userDataService.FindByUserId(update.Message.Chat.Id);
+        User user = await _userDataService.FindByChatId(update.Message.Chat.Id);
         if (user is null)
         {
             user = new User()

@@ -9,15 +9,20 @@ public class BoardController:ControllerBase
 {
     private readonly BoardService _boardService;
 
-    public BoardController(ITelegramBotClient botClient , BoardService boardService) 
-        : base(botClient)
+    // public BoardController(ITelegramBotClient botClient , BoardService boardService) 
+    //     : base(botClient)
+    // {
+    //     _boardService = boardService;
+    // }
+
+    public override bool HandleAction(ControllerContext context)
     {
-        _boardService = boardService;
+        return true;
     }
 
-    public override void HandleAction(ControllerContext context)
+    public override bool HandleUpdate(ControllerContext context)
     {
-        
+        throw new NotImplementedException();
     }
 
     public async Task Start(ControllerContext context)
@@ -55,7 +60,9 @@ public class BoardController:ControllerBase
         context.Session.Action = "Start";
         
     }
-    
-    
-    
+
+
+    public BoardController(ITelegramBotClient botClient, ControllerManager controllerManager) : base(botClient, controllerManager)
+    {
+    }
 }

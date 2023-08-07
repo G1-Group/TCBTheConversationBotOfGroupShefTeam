@@ -25,16 +25,25 @@ class Program
 
     public static void Main(string[] args)
     {
+        new TelegramBotStartService().Start().Wait();
+
+        Console.ReadKey();
+    }
+    
+    
+    
+    
+    public static void Main2(string[] args)
+    {
         _userDataService = new UserDataService(com);
         _boardService = new BoardService(_boardDataSarvice, _messageDataServise);
-        _boardCreateCintroller = new BoardCreateController(_telegramBotClient, _boardService);
-        _boardListAllBoard = new BoardListAllBoard(_telegramBotClient, _boardService);
-        _registerController = new RegisterController(_telegramBotClient,_userDataService);
-        _loginController = new LoginController(_telegramBotClient, _userDataService);
-        _homeController = new HomeController(_telegramBotClient, _boardCreateCintroller, _boardListAllBoard,
-            _loginController, _registerController, _userDataService);
+        // _boardCreateCintroller = new BoardCreateController(_telegramBotClient, _boardService);
+        // _boardListAllBoard = new BoardListAllBoard(_telegramBotClient, _boardService);
+        // _registerController = new RegisterController(_telegramBotClient,_userDataService);
+        // _loginController = new LoginController(_telegramBotClient, _userDataService);
+        // _homeController = new HomeController(_telegramBotClient, _userDataService);
         _handleUser = new HandleUser(_homeController,_userDataService);
-        TelegramBotStartService telegramBotStartService = new TelegramBotStartService(_handleUser);
+        TelegramBotStartService telegramBotStartService = new TelegramBotStartService();
         telegramBotStartService.Start();
         Console.ReadLine();
     }

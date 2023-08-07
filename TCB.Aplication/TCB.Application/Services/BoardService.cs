@@ -7,9 +7,9 @@ namespace TCB.Aplication.Services;
 public class BoardService:IBoardService
 {
     private readonly BoardDataSarvice _boardDataSarvice;
-    private readonly MessageDataService _messageDataService;
+    private readonly MessageDataServise _messageDataService;
 
-    public BoardService(BoardDataSarvice boardDataSarvice,MessageDataService messageDataService)
+    public BoardService(BoardDataSarvice boardDataSarvice,MessageDataServise messageDataService)
     {
         _boardDataSarvice = boardDataSarvice;
         messageDataService = messageDataService;

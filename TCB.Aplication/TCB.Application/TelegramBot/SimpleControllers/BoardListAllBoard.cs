@@ -1,5 +1,7 @@
+using TCB.Aplication.Domain;
 using TCB.Aplication.Services;
 using Telegram.Bot;
+using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
 namespace TCB.Aplication.TelegramBot.Managers;
 
@@ -43,6 +45,7 @@ public class BoardListAllBoard:ControllerBase
             }
             default:
             {
+                
                 Start(context);
                 break;
             }
@@ -51,38 +54,97 @@ public class BoardListAllBoard:ControllerBase
 
     public async Task Start(ControllerContext context)
     {
-        // ... Azimjon zem
+        SendMessage(context, "You See Boards?\n\\Yes or \\No");
         context.Session.Action = "PrintBoard";
     }
 
 
     public async Task PrintBoard(ControllerContext context)
     {
-        // ... Azimjon zem
+        if (context.Update.Message.Text == "\\No")
+        {
+            GoHome(context);
+            return;
+        }
+        if (context.Update.Message.Text != "\\Yes")
+        {
+            Start(context);
+            return;
+        }
+
+        foreach (var board in await _boardService.GetAllModel())
+        {
+            SendMessage(context, board.NickName);
+        }
+
+        SendMessage(context, "Write to board ?\n\\Yes or \\No");
         context.Session.Action = "WriteOrGoToHome";
     }
 
     public async Task WriteOrGoToHome(ControllerContext context)
     {
-        // ... Azimjon zem
+
+        if (context.Update.Message.Text == "\\No")
+        {
+            GoHome(context);
+            return;
+        }
+
+        if (context.Update.Message.Text != "\\Yes")
+        {
+            SendMessage(context, "Write to boar?\n\\Yes or \\No");
+            return;
+        }
         
-        
-        // context.Session.Action == yes  NickNameBoard or GoBack
-        
+        SendMessage(context, "Enter your NickName");
+        context.Session.Action = "NickNameBoard";
     }
 
     public async Task NickNameBoard(ControllerContext context)
     {
-        // .. Aizmjon zem
+
+        if (context.Update.Message.Type != MessageType.Text)
+        {
+            SendMessage(context, "Enter your NickName");
+            return;
+        }
+        if (context.Update.Message.Text == "\\GoBack")
+        {
+            GoHome(context);
+            return;
+        }
+        
+        Board board = await _boardService.FindByNickNameModel(context.Update.Message.Text);
+        if (board.NickName is null)
+        {
+            SendMessage(context, "NickName not found\n or \\GoBack");
+            return;
+        }
+
+        context.Session.board = board;
+        SendMessage(context, "Board to Writein");
         context.Session.Action = "Write";
-        // context.Session.board= find board Azimjon zem qushing
     }
 
 
     public async Task Write(ControllerContext context)
     {
-        // ... Azimjon zem
 
+        if (context.Update.Message.Type != MessageType.Text)
+        {
+            GoHome(context);
+            return;
+        }
+
+        await _boardService.WriteMessageToBoard(context.Session.board.Id,new Message()
+       {
+           message = context.Update.Message.Text,
+           time = DateTime.Now,
+           BoardId = context.Session.board.Id,
+           FromId = context.Update.Message.Chat.Id,
+           status = Domain.MessageType.Board
+       });
+        
         context.Session.board = null;
         context.Session.Controller = "HomeController";
         context.Session.Action = null;

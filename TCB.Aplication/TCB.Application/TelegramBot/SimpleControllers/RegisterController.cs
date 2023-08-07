@@ -10,8 +10,11 @@ namespace TCB.Aplication.TelegramBot.Managers;
 
 public class RegisterController : ControllerBase
 {
-    public RegisterController(ITelegramBotClient botClient) : base(botClient)
+    private readonly UserDataService _userDataService;
+
+    public RegisterController(ITelegramBotClient botClient , UserDataService userDataService) : base(botClient)
     {
+        _userDataService = userDataService;
     }
 
     public override void HandleAction(ControllerContext context)
@@ -21,11 +24,6 @@ public class RegisterController : ControllerBase
             case "Password":
             {
                 Password(context);
-                break;
-            }
-            case "NickName":
-            {
-                NickName(context);
                 break;
             }
             case "PhoneNumber":
@@ -42,30 +40,63 @@ public class RegisterController : ControllerBase
         }
     }
 
+    
+    
+    public async Task Start(ControllerContext context)
+    {
+        SendMessage(context, "Enter your Phone Number✍️");
+        context.Session.Action = "PhoneNumber";
+    }
+    
+    
+    public async Task PhoneNumber(ControllerContext context)
+    {
+        if (context.Update.Message.Type != MessageType.Text)
+        {
+            SendMessage(context, "Enter your Phone Number✍️");
+            return;
+        }
+
+        User user = await  _userDataService.FindByPhoneNumber(context.Update.Message.Text);
+        if (user.PhoneNumber is not null)
+        {
+            SendMessage(context, "No such number exists\nor /GoBack");
+            return;
+        }
+
+        context.Session.User = user;
+       // _userDataService.CreateData(user.PhoneNumber)
+        SendMessage(context, "Enter your Password✍️");
+        context.Session.Action = "Password";
+    }
+    
+    
     public async Task Password(ControllerContext context)
     {
-        // ... Malika opa 
+        
+        
         context.Session.Controller = "Login";
         context.Session.Action = null;
     }
 
-    public async Task PhoneNumber(ControllerContext context)
-    {
-        // ... Malika opa
-        context.Session.Action = "NickName";
-    }
 
     public async Task NickName(ControllerContext context)
     {
-        // ... Malika opa
+        if (context.Update.Message.Text == "/GoBack")
+        {
+            GoBack(context);
+            return;
+        }
+
+        if (context.Update.Message.Type != MessageType.Text)
+        {
+            SendMessage(context, "Enter your NickName✍️");
+        }
+        
+        
         context.Session.Action = "Password";
     }
 
-    public async Task Start(ControllerContext context)
-    {
-        // ... Malika opa
-        context.Session.Action = "PhoneNumber";
-    }
 
     public async Task GoBack(ControllerContext context)
     {

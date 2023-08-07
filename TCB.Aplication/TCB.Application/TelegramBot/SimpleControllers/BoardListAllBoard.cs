@@ -54,19 +54,19 @@ public class BoardListAllBoard:ControllerBase
 
     public async Task Start(ControllerContext context)
     {
-        SendMessage(context, "You See Boards?\n\\Yes or \\No");
+        SendMessage(context, "You See Boards?\n/Yes or /No");
         context.Session.Action = "PrintBoard";
     }
 
 
     public async Task PrintBoard(ControllerContext context)
     {
-        if (context.Update.Message.Text == "\\No")
+        if (context.Update.Message.Text == "/No")
         {
             GoHome(context);
             return;
         }
-        if (context.Update.Message.Text != "\\Yes")
+        if (context.Update.Message.Text != "/Yes")
         {
             Start(context);
             return;
@@ -77,22 +77,22 @@ public class BoardListAllBoard:ControllerBase
             SendMessage(context, board.NickName);
         }
 
-        SendMessage(context, "Write to board ?\n\\Yes or \\No");
+        SendMessage(context, "Write to board ?\n/Yes or /No");
         context.Session.Action = "WriteOrGoToHome";
     }
 
     public async Task WriteOrGoToHome(ControllerContext context)
     {
 
-        if (context.Update.Message.Text == "\\No")
+        if (context.Update.Message.Text == "/No")
         {
             GoHome(context);
             return;
         }
 
-        if (context.Update.Message.Text != "\\Yes")
+        if (context.Update.Message.Text != "/Yes")
         {
-            SendMessage(context, "Write to boar?\n\\Yes or \\No");
+            SendMessage(context, "Write to boar?\n/Yes or /No");
             return;
         }
         
@@ -108,7 +108,7 @@ public class BoardListAllBoard:ControllerBase
             SendMessage(context, "Enter your NickName");
             return;
         }
-        if (context.Update.Message.Text == "\\GoBack")
+        if (context.Update.Message.Text == "/GoBack")
         {
             GoHome(context);
             return;
@@ -117,13 +117,14 @@ public class BoardListAllBoard:ControllerBase
         Board board = await _boardService.FindByNickNameModel(context.Update.Message.Text);
         if (board.NickName is null)
         {
-            SendMessage(context, "NickName not found\n or \\GoBack");
+            SendMessage(context, "NickName not found\n or /GoBack");
             return;
         }
 
         context.Session.board = board;
         SendMessage(context, "Board to Writein");
         context.Session.Action = "Write";
+      
     }
 
 
@@ -140,6 +141,7 @@ public class BoardListAllBoard:ControllerBase
        {
            message = context.Update.Message.Text,
            time = DateTime.Now,
+           chatId = context.Update.Message.Chat.Id,
            BoardId = context.Session.board.Id,
            FromId = context.Update.Message.Chat.Id,
            status = Domain.MessageType.Board

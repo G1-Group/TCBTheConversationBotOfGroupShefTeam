@@ -10,77 +10,67 @@ namespace TCB.Aplication.TelegramBot.Managers;
 
 public class RegisterController : ControllerBase
 {
-    private readonly ITelegramBotClient _botClient;
-    private readonly UserDataService _userDataService;
-
-
-    public RegisterController(ITelegramBotClient botClient,
-        UserDataService userDataService) : base(botClient)
+    public RegisterController(ITelegramBotClient botClient) : base(botClient)
     {
-        _botClient = botClient;
-        _userDataService = userDataService;
     }
 
-    public async  Task Start(ControllerContext context)
+    public override void HandleAction(ControllerContext context)
     {
-        if (context.Update.Message.Type != MessageType.Text)
+        switch (context.Session.Action)
         {
-            this.SendMessage(context, "Please select one below");
-            return;
-        }
-        switch (context.Update.Message.Text)
-        {
-            case "login":
+            case "Password":
             {
-                context.Session.Action = "StartLogin";
-                this.SendMessage(context, "Enter password");
+                Password(context);
+                break;
+            }
+            case "NickName":
+            {
+                NickName(context);
+                break;
+            }
+            case "PhoneNumber":
+            {
+                PhoneNumber(context);
+                break;
+            }
+            default:
+            {
+                Start(context);
                 break;
             }
             
         }
     }
 
-    private async Task StartLogin(ControllerContext context)
+    public async Task Password(ControllerContext context)
     {
-        if (context.Update.Message.Type != MessageType.Text)
-        {
-            
-            return;
-        }
-
-        User user = await _userDataService.FindByUserId(context.Update.Message.Chat.Id);
-
+        // ... Malika opa 
+        context.Session.Controller = "Login";
+        context.Session.Action = null;
     }
 
-    private async Task ChekUserInDataBase(ControllerContext context)
+    public async Task PhoneNumber(ControllerContext context)
     {
-        
-        
+        // ... Malika opa
+        context.Session.Action = "NickName";
     }
 
-    private async Task GetTokenRegister(Update update, CancellationToken cancellationToken)
+    public async Task NickName(ControllerContext context)
     {
-        ReplyKeyboardMarkup replyKeyboardMarkup = new(new[]
-        {
-            new KeyboardButton[] { "Registration✍️", "Login✍️" },
-        })
-        {
-            ResizeKeyboard = true
-        };
-        
-        Message sentMessage = await _botClient.SendTextMessageAsync(
-            chatId: update.Message.Chat.Id,
-            parseMode:ParseMode.Html,
-            text: "Please select one below☺️\n" +
-                  "<strong>.Registration</strong>\n" +
-                  "<strong>.Login</strong>\n",
-            replyMarkup: replyKeyboardMarkup,
-            cancellationToken: cancellationToken);
+        // ... Malika opa
+        context.Session.Action = "Password";
+    }
+
+    public async Task Start(ControllerContext context)
+    {
+        // ... Malika opa
+        context.Session.Action = "PhoneNumber";
+    }
+
+    public async Task GoBack(ControllerContext context)
+    {
+        // ... Og'abek
     }
 
 
-    public override void HandleAction(ControllerContext context)
-    {
-        throw new NotImplementedException();
-    }
 }

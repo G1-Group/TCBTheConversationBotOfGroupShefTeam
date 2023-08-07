@@ -51,7 +51,7 @@ public class RegisterController : ControllerBase
     
     public async Task PhoneNumber(ControllerContext context)
     {
-        if (context.Update.Message.Type != MessageType.Text)
+        if (context.Update.Message.Type != MessageType.Contact)
         {
             SendMessage(context, "Enter your Phone Number✍️");
             return;
@@ -64,8 +64,11 @@ public class RegisterController : ControllerBase
             return;
         }
 
-        context.Session.User = user;
-       // _userDataService.CreateData(user.PhoneNumber)
+        context.Session.User = new User()
+        {
+            PhoneNumber = context.Update.Message.Text,
+            TelegramClientId = context.Update.Message.Chat.Id
+        };
         SendMessage(context, "Enter your Password✍️");
         context.Session.Action = "Password";
     }
@@ -74,7 +77,31 @@ public class RegisterController : ControllerBase
     public async Task Password(ControllerContext context)
     {
         
-        
+        if (context.Update.Message.Type != MessageType.Text)
+        {
+            SendMessage(context, "Enter your Password✍️");
+            return;
+        }
+        if (context.Update.Message.Text == "/GoBack")
+        {
+            await GoBack(context);
+            return;
+        }
+
+        User user =await _userDataService.FindByUserId(context.Update.Message.Chat.Id);
+
+        if (user is  null)
+        {
+            SendMessage(context, "User No found");
+            Start(context);
+            return;
+        }
+
+        user.Password = context.Update.Message.Text;
+        context.Session.User = user;
+
+        await _userDataService.CreateData(user);
+        SendMessage(context, "Successfully");
         context.Session.Controller = "Login";
         context.Session.Action = null;
     }
@@ -100,7 +127,9 @@ public class RegisterController : ControllerBase
 
     public async Task GoBack(ControllerContext context)
     {
-        // ... Og'abek
+        SendMessage(context, "Type a character");
+        context.Session.Controller = "Register";
+        context.Session.Action = null;
     }
 
 

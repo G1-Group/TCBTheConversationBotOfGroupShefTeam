@@ -70,12 +70,12 @@ public class BoardService:IBoardService
         return await _boardDataSarvice.FindByNickName(nickName);
     }
 
-    public async Task WriteMessageToBoard(long BoardId, Message messageTcb)
+    public async Task WriteMessageToBoard(long BoardId, Message message)
     {
-        if(messageTcb is null)
+        if(message is null)
             return;
-        messageTcb.messageStatus = MessageStatus.NoRead;
-        _messageDataService.CreateData(messageTcb);
+        message.messageStatus = MessageStatus.NoRead;
+        _messageDataService.CreateData(message);
     }
 
     public async Task<List<Message>> ReadMessageToBoard(long Id)

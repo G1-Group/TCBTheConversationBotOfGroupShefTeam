@@ -17,7 +17,7 @@ public class RegisterController : ControllerBase
         _userDataService = userDataService;
     }
 
-    public override bool HandleAction(ControllerContext context)
+    public override async Task<bool> HandleAction(ControllerContext context)
     {
         switch (context.Session.Action)
         {
@@ -42,7 +42,7 @@ public class RegisterController : ControllerBase
         return true;
     }
 
-    public override bool HandleUpdate(ControllerContext context)
+    public override async Task<bool>HandleUpdate(ControllerContext context)
     {
         throw new NotImplementedException();
     }
@@ -73,7 +73,7 @@ public class RegisterController : ControllerBase
         context.Session.User = new User()
         {
             PhoneNumber = context.Update.Message.Text,
-            TelegramClientId = context.Update.Message.Chat.Id
+            TelegramChatId = context.Update.Message.Chat.Id
         };
         SendMessage(context, "Enter your Password✍️");
         context.Session.Action = "Password";

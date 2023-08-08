@@ -1,9 +1,9 @@
-create schema if not exists TelegramBot;
+create schema if not exists telegramBot;
 
 
-create table if not exists  "telegrambot".user (
+create table if not exists  telegrambot.User (
     id bigserial primary key,
-    client_id bigint ,
+    chat_id bigint ,
     password varchar(20),
     phone_number varchar(20)
     );
@@ -11,7 +11,7 @@ create table if not exists  "telegrambot".user (
 
 
 
-create table if not exists "telegrambot".Client (
+create table if not exists telegrambot.Client (
     id bigserial primary key ,
     user_id bigint  REFERENCES "telegrambot".user(id),
     chat_id bigint,
@@ -23,30 +23,28 @@ create table if not exists "telegrambot".Client (
 
 
 
-create table if not exists "telegrambot".Board (
+create table if not exists telegrambot.Board (
     id bigserial primary key ,
     owner_id bigint references "telegrambot".Client(id),
     nickName varchar(20)
     );
 
 
-create table if not exists "telegrambot".AnonyChat(
+create table if not exists telegrambot.AnonyChat(
     id bigserial primary key ,
-    status int,
-    create_time date ,
-    from_id bigint REFERENCES "telegrambot".Client(id),
-    to_id bigint REFERENCES "telegrambot".Client(id)
+    anonym_chat_status int,
+    time date ,
+    client_chat_id_first bigint REFERENCES "telegrambot".Client(id),
+    client_chat_id_last bigint REFERENCES "telegrambot".Client(id)
     );
-
-create table if not exists "telegrambot".Message(
+   
+create table if not exists telegrambot.Message(
     id bigserial primary key ,
-    message varchar(200),
+    text varchar(200),
     from_id bigint,
     time date,
-    chat_id bigint ,
+    anonym_chat_id bigint ,
     board_id bigint,
     message_status int,
     status int
     );
-
-

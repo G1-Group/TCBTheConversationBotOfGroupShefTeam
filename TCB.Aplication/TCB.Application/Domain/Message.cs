@@ -4,8 +4,8 @@ namespace TCB.Aplication.Domain;
 
 public class Message : ModelBase
 {
-    [Description("Message")]
-    public string message { get; set; }
+    [Description("text")]
+    public string text { get; set; }
     
     [Description("from_id")]
     public long? FromId { get; set; }
@@ -14,10 +14,11 @@ public class Message : ModelBase
     public DateTime time { get; set; }
     
     [Description("board_id")]
-    public long BoardId { get; set; }
+    public long? BoardId { get; set; }
     
-    [Description("chat_id")]
-    public long? chatId { get; set; }
+    [Description("anonym_chat_id")]
+    
+    public long? AnonymChatId { get; set; }
     
     [Description("status")]
     public MessageType status { get; set; }

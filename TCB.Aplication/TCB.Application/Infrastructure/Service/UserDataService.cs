@@ -20,7 +20,7 @@ public class UserDataService : DataProvider
         var result = await ExecuteNonResult(QueryUser.InsertQuery, new NpgsqlParameter[]
         {
             new NpgsqlParameter("@p0", data.Id),
-            new NpgsqlParameter("@p1", data.TelegramClientId),
+            new NpgsqlParameter("@p1", data.TelegramChatId),
             new NpgsqlParameter("@p2", data.PhoneNumber),
             new NpgsqlParameter("@p3", data.Password)
         });
@@ -36,7 +36,7 @@ public class UserDataService : DataProvider
         var result = await ExecuteNonResult(QueryUser.InsertQuery, new NpgsqlParameter[]
         {
             new NpgsqlParameter("@p0", data.Id),
-            new NpgsqlParameter("@p1", data.TelegramClientId),
+            new NpgsqlParameter("@p1", data.TelegramChatId),
             new NpgsqlParameter("@p2", data.PhoneNumber),
             new NpgsqlParameter("@p3", data.Password)
         });
@@ -143,7 +143,7 @@ public class UserDataService : DataProvider
         return new User()
         {
             Id = reader.GetInt16(0),
-            TelegramClientId = reader.GetInt16(1),
+            TelegramChatId = reader.GetInt16(1),
             PhoneNumber = reader.GetString(2),
             Password = reader.GetString(3)
         };

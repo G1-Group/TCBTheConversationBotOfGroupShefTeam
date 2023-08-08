@@ -18,10 +18,10 @@ public class AnonymChatDataService:DataProvider
         var result = await this.ExecuteNonResult(QueryAnonymChat.InsertQuery, new NpgsqlParameter[]
         {
             new NpgsqlParameter("@p0", data.Id),
-            new NpgsqlParameter("@p1", data.ClientFromId),
-            new NpgsqlParameter("@p2", data.ConnectClientId),
+            new NpgsqlParameter("@p1", data.ClientChatIdFirst),
+            new NpgsqlParameter("@p2", data.ClientChatIdLast),
             new NpgsqlParameter("@p3", data.Status),
-            new NpgsqlParameter("@p4", data.CreateData),
+            new NpgsqlParameter("@p4", data.time),
 
         });
 
@@ -34,10 +34,10 @@ public class AnonymChatDataService:DataProvider
         var result = await ExecuteNonResult(QueryAnonymChat.UpdateQuery, new NpgsqlParameter[]
         {
             new NpgsqlParameter("@p0", Id),
-            new NpgsqlParameter("@p1", data.ClientFromId),
-            new NpgsqlParameter("@p2", data.ConnectClientId),
+            new NpgsqlParameter("@p1", data.ClientChatIdFirst),
+            new NpgsqlParameter("@p2", data.ClientChatIdLast),
             new NpgsqlParameter("@p3", data.Status),
-            new NpgsqlParameter("@p4", data.CreateData),
+            new NpgsqlParameter("@p4", data.time),
         });
         return await FindByIdData(Id);
     }
@@ -73,11 +73,11 @@ public class AnonymChatDataService:DataProvider
         return chat;
     }
 
-    public async Task<AnonymChat> FindByFromIdOrClientId(long Id)
+    public async Task<AnonymChat> FindByClientIdFirstOrLast(long ClientId)
     {
-        var reader = await ExecuteWithResult(QueryAnonymChat.SelectByIdQuery, new NpgsqlParameter[]
+        var reader = await ExecuteWithResult(QueryAnonymChat.SelectByClientChatIdQuery, new NpgsqlParameter[]
         {
-            new NpgsqlParameter("@p1",Id)
+            new NpgsqlParameter("@p1",ClientId)
         });
         List<AnonymChat> chats = new List<AnonymChat>();
         while (reader.Read())
@@ -87,7 +87,7 @@ public class AnonymChatDataService:DataProvider
 
     public async Task<AnonymChat> FindByStatus(int role)
     {
-        var reader = await ExecuteWithResult(QueryAnonymChat.SelectByIdQuery, new NpgsqlParameter[]
+        var reader = await ExecuteWithResult(QueryAnonymChat.SelectByStatusQuery, new NpgsqlParameter[]
         {
             new NpgsqlParameter("@p3",role)
         });
@@ -104,10 +104,10 @@ public class AnonymChatDataService:DataProvider
         return new AnonymChat()
         {
             Id = reader.GetInt64(0),
-            ClientFromId = reader.GetInt64(1),
-            ConnectClientId = reader.GetInt64(2),
-            //Status = reader.GetInt32(3),
-            CreateData = reader.GetDateTime(4)
+            ClientChatIdFirst = reader.GetInt64(1),
+            ClientChatIdLast = reader.GetInt64(2),
+            Status = (AnonymChatStatus)reader.GetInt32(3),
+            time = reader.GetDateTime(4)
         };
     }
     

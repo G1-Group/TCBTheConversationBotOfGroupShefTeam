@@ -33,7 +33,7 @@ public interface  IService<T>  where T : ModelBase
     /// </summary>
     /// <param name="Id"></param>
     /// <returns></returns>
-    public Task<T> FindByIdModel(long Id);
+    public Task<T> FindById(long Id);
     
  
 }

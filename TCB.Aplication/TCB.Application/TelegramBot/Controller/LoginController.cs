@@ -17,7 +17,7 @@ public class LoginController:ControllerBase
         _userDataService = userDataService;
     }
 
-    public override bool HandleAction(ControllerContext context)
+    public override async Task<bool> HandleAction(ControllerContext context)
     {
         switch (context.Session.Action)
         {
@@ -62,15 +62,12 @@ public class LoginController:ControllerBase
         return false;
     }
 
-    public override bool HandleUpdate(ControllerContext context)
+    public override async Task<bool> HandleUpdate(ControllerContext context)
     {
         return true;
     }
 
-    public async Task GoBack(ControllerContext context)
-    {
-        // ... Og'abek
-    }
+   
 
 
     public async Task Password(ControllerContext context)

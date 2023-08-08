@@ -10,7 +10,6 @@ public class ControllerManager
     public ControllerManager(ITelegramBotClient client, UserDataService userDataService)
     {
         this._loginController = new LoginController(client, userDataService, this);
-        this._homeController = new HomeController(client, userDataService, _loginController, this);
     }
 
     public ControllerBase GetControllerBySessionData(Session session)

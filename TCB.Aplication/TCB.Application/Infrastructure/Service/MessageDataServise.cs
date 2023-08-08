@@ -21,8 +21,8 @@ public class MessageDataServise : DataProvider,IMessageDataService
             new NpgsqlParameter("@p0", data.Id),
             new NpgsqlParameter("@p1", data.FromId),
             new NpgsqlParameter("@p2",data.BoardId),
-            new NpgsqlParameter("@p3",data.chatId),
-            new NpgsqlParameter("@p4",data.message),
+            new NpgsqlParameter("@p3",data.AnonymChatId),
+            new NpgsqlParameter("@p4",data.text),
             new NpgsqlParameter("@p5",data.time),
             new NpgsqlParameter("@p6",data.status),
             new NpgsqlParameter("@p7", data.messageStatus)
@@ -36,31 +36,32 @@ public class MessageDataServise : DataProvider,IMessageDataService
     {
         var result = await this.ExecuteNonResult(QueryMessage.UpdateQuery(), new NpgsqlParameter[]
         {
-            new NpgsqlParameter("@p0", message.Id),
+            new NpgsqlParameter("@p0", Id),
             new NpgsqlParameter("@p1", message.FromId),
             new NpgsqlParameter("@p2", message.BoardId),
-            new NpgsqlParameter("@p3", message.chatId),
-            new NpgsqlParameter("@p4", message.message),
+            new NpgsqlParameter("@p3", message.AnonymChatId),
+            new NpgsqlParameter("@p4", message.text),
             new NpgsqlParameter("@p5", message.time),
             new NpgsqlParameter("@p6", message.status),
             new NpgsqlParameter("@p7", message.messageStatus)
         }); 
         
-        return await FindByIdData(message.Id);
+        return await FindByIdData(Id);
     }
-    public async Task<int> InsertMessage(Message message)
+    public async Task<Message> InsertMessage(Message message)
     {
-        return await this.ExecuteNonResult(QueryMessage.InsertQuery(), new NpgsqlParameter[]
+         await this.ExecuteNonResult(QueryMessage.InsertQuery(), new NpgsqlParameter[]
         {
             new NpgsqlParameter("@p0", message.Id),
             new NpgsqlParameter("@p1", message.FromId),
             new NpgsqlParameter("@p2", message.BoardId),
-            new NpgsqlParameter("@p3", message.chatId),
-            new NpgsqlParameter("@p4", message.message),
+            new NpgsqlParameter("@p3", message.AnonymChatId),
+            new NpgsqlParameter("@p4", message.text),
             new NpgsqlParameter("@p5", message.time),
             new NpgsqlParameter("@p6", message.status),
             new NpgsqlParameter("@p7", message.messageStatus)
         });
+         return await FindByIdData(message.Id);
     }
     
 
@@ -90,7 +91,7 @@ public class MessageDataServise : DataProvider,IMessageDataService
 
     public async Task<Message> DeleteData(long id)
     {
-        Message message = await FintByFromId(id);
+        Message message = await FindByIdData(id);
         var resultMessage = await ExecuteNonResult(QueryMessage.DeleteQuery(), new NpgsqlParameter[]
         {
             new NpgsqlParameter("@p0", id)
@@ -98,7 +99,7 @@ public class MessageDataServise : DataProvider,IMessageDataService
         return message;
     }
 
-    public async Task<Message> FintByFromId(long fromId)
+    public async Task<List<Message>> FintByFromId(long fromId)
     {
         var reader = await this.ExecuteWithResult(QueryMessage.SelectByFromId(), new NpgsqlParameter[]
         {
@@ -110,7 +111,7 @@ public class MessageDataServise : DataProvider,IMessageDataService
             messages.Add(this.ReaderDataModel(reader));
         }
 
-        return messages.FirstOrDefault();
+        return messages;
     }
 
     public async Task<List<Message>> GetAllFindBoardId(long boardId)
@@ -137,8 +138,8 @@ public class MessageDataServise : DataProvider,IMessageDataService
             Id = reader.GetInt64(0),
             FromId = reader.GetInt64(1),
             BoardId = reader.GetInt64(2),
-            chatId = reader.GetInt64(3),
-            message = reader.GetString(4),
+            AnonymChatId = reader.GetInt64(3),
+            text = reader.GetString(4),
             time = reader.GetDateTime(5),
             status = (MessageType)reader.GetInt32(6),
             messageStatus = (MessageStatus)reader.GetInt32(7)

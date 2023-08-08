@@ -25,8 +25,7 @@ public class TelegramBotStartService
 
     private readonly List<string> authRequiredControllers = new List<string>()
     {
-        nameof(BoardController),
-        nameof(BoardCreateController)
+        
     };
 
     public TelegramBotStartService()

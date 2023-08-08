@@ -53,7 +53,7 @@ public class RegisterController : ControllerBase
                 await Start(context);
                 return true;
             }
-            case "//GoBack":
+            case "/GoBack":
             {
                 await GoBack(context);
                 return true;

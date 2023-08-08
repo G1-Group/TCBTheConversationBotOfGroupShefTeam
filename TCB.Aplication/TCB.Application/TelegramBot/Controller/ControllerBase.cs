@@ -13,7 +13,7 @@ public abstract class ControllerBase
         _botClient = botClient;
         _controllerManager = controllerManager;
     }
-    public abstract Task HandleAction(ControllerContext context);
+    public abstract Task<bool> HandleAction(ControllerContext context);
 
     public abstract Task<bool> HandleUpdate(ControllerContext context);
 

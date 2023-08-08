@@ -12,7 +12,7 @@ public class BoardController:ControllerBase
     {
     }
 
-    public override async Task HandleAction(ControllerContext context)
+    public override async Task<bool> HandleAction(ControllerContext context)
     {
         switch (context.Session.Action)
         {

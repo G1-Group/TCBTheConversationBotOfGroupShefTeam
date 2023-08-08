@@ -23,40 +23,20 @@ public class LoginController:ControllerBase
         {
             case nameof(LoginStepStart):
             {
-                LoginStepStart(context).Wait();
+                await LoginStepStart(context);
                 return true;
             }
             case nameof(LoginStepFirst):
             {
-                LoginStepFirst(context).Wait();
+                await LoginStepFirst(context);
                 return true;
             }
-            case nameof(LoginStepTwo):
+            case nameof(LoginStepLast):
             {
-                LoginStepTwo(context).Wait();
+                await LoginStepLast(context);
                 return true;
             }
-            // case "GoBack":
-            // {
-            //     GoBack(context);
-            //     break;
-            // }
-            // case "Password":
-            // {
-            //     Password(context);
-            //     break;
-            // }
-            // case "PhoneNumber":
-            // {
-            //     PhoneNumber(context);
-            //     break;
-            // }
-            // default:
-            // {
-            //     SendMessage(context, "/PhoneNumber or /GoBack");
-            //     Start(context);
-            //     break;
-            // }
+          
         }
 
         return false;
@@ -64,75 +44,25 @@ public class LoginController:ControllerBase
 
     public override async Task<bool> HandleUpdate(ControllerContext context)
     {
-        return true;
+        if (context.Update.Message.Type != MessageType.Text)
+            return false;
+        switch (context.Update.Message.Text)
+        {
+            
+            case "/Login":
+            {
+                await LoginStepStart(context);
+                return true;
+            }
+           
+            
+        }
+
+        return false;
     }
 
    
-
-
-    public async Task Password(ControllerContext context)
-    {
-        if (context.Update.Message.Type != MessageType.Text)
-        {
-            await SendMessage(context, "Write Text");
-            return;
-        }
-
-        User user =await _userDataService.FindByPhoneNumber(context.Session.User.PhoneNumber);
-        if (user is null)
-        {
-            SendMessage(context, "User not fund");
-            return;
-        }
-
-        if (user.Password != context.Update.Message.Text)
-        {
-            SendMessage(context, "password xato");
-            return;
-        }
-
-        SendMessage(context, "Successfully");
-        context.Session.Controller = "HomeController";
-        context.Session.Action = null;
-    }
-
-
-    public async Task PhoneNumber(ControllerContext context)
-    {
-        if (context.Update.Message.Type != MessageType.Contact)
-        {
-            SendMessage(context, "");
-            context.Session.Action = "Start";
-            return;
-        } 
-        if(_userDataService.FindByPhoneNumber(context.Update.Message.Contact.PhoneNumber) is null)
-        {
-            SendMessage(context, "Phone Number not found");
-            context.Session.Action = "GoBack";
-            return;
-        }
-
-        context.Session.User.PhoneNumber = context.Update.Message.Contact.PhoneNumber;
-        
-        SendMessage(context, "Enter your Password");
-        context.Session.Action = "Password";
-    }
-
-    public async Task Start(ControllerContext context)
-    {
-
-        if (context.Update.Message.Text == "/PhoneNumber")
-        {
-            await SendMessage(context, "Enter your Phone Number?");
-            context.Session.Action = "PhoneNumber";
-        }
-
-        if (context.Update.Message.Text == "/GoBack")
-        {
-            context.Session.Action = "GoBack";
-        }
-        
-    }
+    
 
     public async Task LoginStepStart(ControllerContext context)
     {
@@ -143,7 +73,14 @@ public class LoginController:ControllerBase
     
     public async Task LoginStepFirst(ControllerContext context)
     {
-        context.Session.UserLogin = context.Update.Message?.Text;
+        if (context.Update.Message.Type != MessageType.Text)
+        {
+             await this.SendMessage(context, "Please send message ");
+            await LoginStepStart(context);
+            return;
+        }
+        
+        context.Session.UserLogin = context.Update.Message.Text;
         
         if (string.IsNullOrEmpty(context.Session.UserLogin))
         {
@@ -151,10 +88,10 @@ public class LoginController:ControllerBase
             return;
         }
         await SendMessage(context, "Enter your password: ");
-        context.Session.Action = nameof(LoginStepTwo);
+        context.Session.Action = nameof(LoginStepLast);
     }
 
-    public async Task LoginStepTwo(ControllerContext context)
+    public async Task LoginStepLast(ControllerContext context)
     {
         context.Session.UserPassword = context.Update.Message?.Text;
         

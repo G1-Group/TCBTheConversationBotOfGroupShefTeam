@@ -12,7 +12,8 @@ public class RegisterController : ControllerBase
 {
     private readonly UserDataService _userDataService;
 
-    public RegisterController(ITelegramBotClient botClient , UserDataService userDataService, ControllerManager controllerManager) : base(botClient, controllerManager)
+    public RegisterController(ITelegramBotClient botClient, UserDataService userDataService,
+        ControllerManager controllerManager) : base(botClient, controllerManager)
     {
         _userDataService = userDataService;
     }
@@ -21,12 +22,12 @@ public class RegisterController : ControllerBase
     {
         switch (context.Session.Action)
         {
-            case "Password":
+            case nameof(Password):
             {
                 Password(context);
                 break;
             }
-            case "PhoneNumber":
+            case nameof(PhoneNumber):
             {
                 PhoneNumber(context);
                 break;
@@ -36,34 +37,49 @@ public class RegisterController : ControllerBase
                 Start(context);
                 break;
             }
-            
         }
 
         return true;
     }
 
-    public override async Task<bool>HandleUpdate(ControllerContext context)
+    public override async Task<bool> HandleUpdate(ControllerContext context)
     {
-        throw new NotImplementedException();
-    }
+        if (context.Update.Message.Type != MessageType.Text)
+            return false;
+        switch (context.Update.Message.Text)
+        {
+            case "/Registration":
+            {
+                await Start(context);
+                return true;
+            }
+            case "//GoBack":
+            {
+                await GoBack(context);
+                return true;
+            }
+            
+        }
 
+        return false;
+    }
 
     public async Task Start(ControllerContext context)
     {
         SendMessage(context, "Enter your Phone Number✍️");
         context.Session.Action = "PhoneNumber";
     }
-    
-    
+
+
     public async Task PhoneNumber(ControllerContext context)
     {
         if (context.Update.Message.Type != MessageType.Contact)
         {
-            SendMessage(context, "Enter your Phone Number✍️");
+            SendMessage(context, "Enter your number✍️");
             return;
         }
 
-        User user = await  _userDataService.FindByPhoneNumber(context.Update.Message.Text);
+        User user = await _userDataService.FindByPhoneNumber(context.Update.Message.Text);
         if (user.PhoneNumber is not null)
         {
             SendMessage(context, "No such number exists\nor /GoBack");
@@ -78,25 +94,25 @@ public class RegisterController : ControllerBase
         SendMessage(context, "Enter your Password✍️");
         context.Session.Action = "Password";
     }
-    
-    
+
+
     public async Task Password(ControllerContext context)
     {
-        
         if (context.Update.Message.Type != MessageType.Text)
         {
             SendMessage(context, "Enter your Password✍️");
             return;
         }
-        if (context.Update.Message.Text == "/GoBack")
+
+        if (context.Update.Message.Text == "/"+ nameof(GoBack))
         {
             await GoBack(context);
             return;
         }
 
-        User user =await _userDataService.FindByChatId(context.Update.Message.Chat.Id);
+        User user = await _userDataService.FindByChatId(context.Update.Message.Chat.Id);
 
-        if (user is  null)
+        if (user is null)
         {
             SendMessage(context, "User No found");
             Start(context);
@@ -115,7 +131,7 @@ public class RegisterController : ControllerBase
 
     public async Task NickName(ControllerContext context)
     {
-        if (context.Update.Message.Text == "/GoBack")
+        if (context.Update.Message.Text == "/"+ nameof(GoBack))
         {
             GoBack(context);
             return;
@@ -125,8 +141,8 @@ public class RegisterController : ControllerBase
         {
             SendMessage(context, "Enter your NickName✍️");
         }
-        
-        
+
+
         context.Session.Action = "Password";
     }
 
@@ -137,6 +153,4 @@ public class RegisterController : ControllerBase
         context.Session.Controller = "Register";
         context.Session.Action = null;
     }
-
-
 }

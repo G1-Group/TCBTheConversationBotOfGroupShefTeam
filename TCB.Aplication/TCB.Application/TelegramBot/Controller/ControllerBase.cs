@@ -13,15 +13,15 @@ public abstract class ControllerBase
         _botClient = botClient;
         _controllerManager = controllerManager;
     }
-    public abstract bool HandleAction(ControllerContext context);
+    public abstract Task HandleAction(ControllerContext context);
 
-    public abstract bool HandleUpdate(ControllerContext context);
+    public abstract Task<bool> HandleUpdate(ControllerContext context);
 
-    public virtual void Handle(ControllerContext context)
+    public virtual async Task Handle(ControllerContext context)
     {
         var updateHandled = this.HandleUpdate(context);
 
-        if (!updateHandled)
+        if (!await updateHandled)
         {
             var controllerBase = _controllerManager.GetControllerBySessionData(context.Session);
             controllerBase.Handle(context);
@@ -38,4 +38,10 @@ public abstract class ControllerBase
             text: text
         );
     }
+
+    public async Task Start(ControllerContext context)
+    {
+        
+    }
+    
 }

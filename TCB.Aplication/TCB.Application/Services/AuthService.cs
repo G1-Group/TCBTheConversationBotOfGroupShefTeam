@@ -17,35 +17,45 @@ public class AuthService :  IAuthService
     
     
     
-    public async Task Registration(User user)
+    public async Task<User> Registration(User user,string NickName)
     {
-        if (user is null)
+        if (string.IsNullOrEmpty(NickName) || user is null)
         {
-            throw new ArgumentNullException(nameof(user));
+            Console.WriteLine("xatolik bor user yoki niuck name null");
+            return null;
         }
-        
-        await _userDataService.CreateData(new User()
-            {
-                Id = user.Id,
-                TelegramClientId = user.TelegramClientId,
-                PhoneNumber = user.PhoneNumber ,
-                Password = user.Password
-            }
-        );
+
+        if (await _userDataService.FindByPhoneNumber(user.PhoneNumber) is not null)
+        {
+            Console.WriteLine("User's Phone Number is Active");
+            return null;
+        }
+
+        await _userDataService.CreateData(user);
+        user =await _userDataService.FindByPhoneNumber(user.PhoneNumber);
+        await _clientDataService.CreateData(new Client()
+        {
+            NickName = NickName,
+            Status = ClientStatus.Enabled,
+            TelegramChatId = user.TelegramChatId,
+            UserId = user.Id
+        });
+        return user;
     }
 
-    
-    
+
+
+
     public async Task<Client> Login(string phoneNumber , string password)
     {
         var user = await _userDataService.FindByPassword(phoneNumber);
-
+        if (user is null)
+            return null;
+        
         if (user.Password == password)
-        {
-            return await _clientDataService.FindByIdData(user.Id);
-        }
+            return await _clientDataService.FindByUserId(user.Id);
 
-        throw new ArgumentNullException();
+        return null;
     }
     
     

@@ -4,7 +4,7 @@ using TCB.Aplication.Services.Interface;
 
 namespace TCB.Aplication.Services;
 
-public class BoardService:IBoardService
+public class BoardService:IBoardService,IService<Board>
 {
     private readonly BoardDataSarvice _boardDataSarvice;
     private readonly MessageDataServise _messageDataService;
@@ -58,14 +58,15 @@ public class BoardService:IBoardService
     {
         return await _boardDataSarvice.GetAllData();
     }
+    
 
-    public async Task<Board> FindByIdModel(long Id)
+    public async Task<Board> FindById(long Id)
     {
         return await _boardDataSarvice.FindByIdData(Id);
     }
     
 
-    public async Task<Board> FindByNickNameModel(string nickName)
+    public async Task<Board> FindByNickName(string nickName)
     {
         return await _boardDataSarvice.FindByNickName(nickName);
     }

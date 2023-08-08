@@ -22,19 +22,23 @@ public static class QueryMessage
     {
         return $"select *  from telegrambot.Message where board_id=@p0;";
     }
-
+    public static string SelectByAnonymChatId()
+    {
+        return $"select *  from telegrambot.Message where anonym_chat_id=@p0;";
+    }
+    
     public static string InsertQuery()
     {
-        return $"Insert into telegrambot.Message ( id ,from_id , board_id , chat_id, message, time , status ) values (@p0,@p1,@p2,@p3,@p4,@p5,@p6)";
+        return $"Insert into telegrambot.Message ( id ,from_id , board_id , chat_id, text, time , status , message_status ) values (@p0,@p1,@p2,@p3,@p4,@p5,@p6,@p7)";
     }
     
     public static string UpdateQuery()
     {
-        return $"UPDATE telegrambot.Message SET from_id = @p1 , board_id = @p2 , chat_id = @p3 ,message = @p4 , time = @p5 , status=@p6   WHERE id = @p0;";
+        return $"UPDATE telegrambot.Message SET from_id = @p1 , board_id = @p2 , chat_id = @p3 ,text = @p4 , time = @p5 , status=@p6 ,message_status=@p7  WHERE id = @p0;";
     }
     
     public static string DeleteQuery()
     {
-        return $"DELETE telegrambot.MessageTCB  WHERE id=@p0;";
+        return $"DELETE telegrambot.Message  WHERE id=@p0;";
     }
 }

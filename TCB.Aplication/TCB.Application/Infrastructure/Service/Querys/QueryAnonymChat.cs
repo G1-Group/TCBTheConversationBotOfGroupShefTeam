@@ -6,8 +6,8 @@ public static class QueryAnonymChat
     
     public static string SelectByIdQuery = $"SELECT * FROM telegrambot.AnonyChat  WHERE id=@p0";
 
-    public static string SelectByFromIdOrClientIdQuery =
-        $"SELECT * FROM telegrambot.AnonyChat  WHERE from_id=@p1 or client_id=@p1";
+    public static string SelectByClientChatIdQuery =
+        $"SELECT * FROM telegrambot.AnonyChat  WHERE client_chat_id_first=@p1 or client_chat_id_last=@p1";
 
     
     public static string SelectByStatusQuery = $"SELECT * FROM telegrambot.AnonyChat  WHERE status=@p3";
@@ -17,13 +17,13 @@ public static class QueryAnonymChat
 
 
     public static string InsertQuery =
-        $"INSERT INTO telegrambot.AnonyChat  (id,from_id,client_id,status,create_time) values (@p0,@p1,@p2,@p3,@p4)";
+        $"INSERT INTO telegrambot.AnonyChat  (id,client_chat_id_first,client_chat_id_last,status,time) values (@p0,@p1,@p2,@p3,@p4)";
 
 
     
     
     public static string UpdateQuery =
-        $"UPDATE telegrambot.AnonyChat  SET from_id = @p1 , client_id = @p2 , status=@p3 , create_time = @p4  WHERE id = @p0 ";
+        $"UPDATE telegrambot.AnonyChat  SET client_chat_id_first = @p1 , client_chat_id_last = @p2 , status=@p3 , time = @p4  WHERE id = @p0 ";
 
 
 

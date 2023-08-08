@@ -44,6 +44,11 @@ public class AnonymChatService : IAnonymChatService
         return await _anonymChatDataService.GetAllData();
     }
 
+    public async Task<AnonymChat> FindById(long Id)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<AnonymChat> FindByIdModel(long Id)
     {
         return await _anonymChatDataService.FindByIdData(Id);

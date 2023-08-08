@@ -9,7 +9,7 @@ public interface IBoardService:IService<Board>
     /// </summary>
     /// <param name="nickName"></param>
     /// <returns></returns>
-    public Task<Board> FindByNickNameModel(string nickName);
+    public Task<Board> FindByNickName(string nickName);
 
 
 

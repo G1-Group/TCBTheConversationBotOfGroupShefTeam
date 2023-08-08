@@ -15,8 +15,4 @@ public class Session
 
     public string UserLogin { get; set; }
     public string UserPassword { get; set; }
-
-    //
-    // public Board board { get; set; }
-    // public AnonymChat anonym { get; set; }
 }

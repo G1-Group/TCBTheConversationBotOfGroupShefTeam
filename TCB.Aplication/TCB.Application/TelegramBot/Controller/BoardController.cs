@@ -19,41 +19,43 @@ public class BoardController:ControllerBase
             case nameof(CreateBoard):
             {
                 await CreateBoard(context);
-                break;
+                return true;
             }
             case nameof(PrintBoard):
             {
                 await PrintBoard(context);
-                break;
+                return true;
             }
             case nameof(WriteMessageToBoard):
             {
-               await WriteToBoardOrGoBack(context);
-                break;
+                await WriteToBoardOrGoBack(context);
+                return true;
             }
             case nameof(GetBoardNickName):
             {
                 await GetBoardNickName(context);
-                break;
+                return true;
             }
             case nameof(GoBack):
             {
                 await GoBack(context);
-                break;
+                return true;
             }
             case nameof(GoHome):
             {
-               await GoHome(context);
-                break;
+                await GoHome(context);
+                return true;
             }
             case nameof(WriteToBoardOrGoBack):
             {
                 WriteToBoardOrGoBack(context);
-                break;
+                return true;
             }
-           
 
-        }   
+
+        }
+
+        return false;
     }
 
     public override async Task<bool> HandleUpdate(ControllerContext context)

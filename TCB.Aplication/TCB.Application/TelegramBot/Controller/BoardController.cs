@@ -79,6 +79,7 @@ public class BoardController:ControllerBase
             }
             case nameof(PrintBoard):
             {
+                await PrintBoard(context);
                 return true;
             }
         }
@@ -88,7 +89,9 @@ public class BoardController:ControllerBase
 
     public async Task CreateBoard(ControllerContext context)
     {
-        
+
+
+        context.Session.Action = null;
     }
 
     public async Task GoHome(ControllerContext context)

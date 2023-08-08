@@ -78,7 +78,7 @@ public class ClientDataService : DataProvider
 
         while (result.Read())
             clients.Add(ReaderDataModel(result));
-            return clients.FirstOrDefault();
+        return clients.FirstOrDefault();
         
         
     }

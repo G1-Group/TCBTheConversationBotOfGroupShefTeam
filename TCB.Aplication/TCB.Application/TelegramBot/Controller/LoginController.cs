@@ -81,17 +81,17 @@ public class LoginController:ControllerBase
         User user =await _userDataService.FindByPhoneNumber(context.Session.User.PhoneNumber);
         if (user is null)
         {
-            SendMessage(context, "User not fund");
+            await SendMessage(context, "User not fund");
             return;
         }
 
         if (user.Password != context.Update.Message.Text)
         {
-            SendMessage(context, "password xato");
+            await SendMessage(context, "password xato");
             return;
         }
 
-        SendMessage(context, "Successfully");
+        await SendMessage(context, "Successfully");
         context.Session.Controller = "HomeController";
         context.Session.Action = null;
     }
@@ -101,20 +101,20 @@ public class LoginController:ControllerBase
     {
         if (context.Update.Message.Type != MessageType.Contact)
         {
-            SendMessage(context, "");
+            await SendMessage(context, "");
             context.Session.Action = "Start";
             return;
         } 
         if(_userDataService.FindByPhoneNumber(context.Update.Message.Contact.PhoneNumber) is null)
         {
-            SendMessage(context, "Phone Number not found");
+            await SendMessage(context, "Phone Number not found");
             context.Session.Action = "GoBack";
             return;
         }
 
         context.Session.User.PhoneNumber = context.Update.Message.Contact.PhoneNumber;
         
-        SendMessage(context, "Enter your Password");
+        await SendMessage(context, "Enter your Password");
         context.Session.Action = "Password";
     }
 

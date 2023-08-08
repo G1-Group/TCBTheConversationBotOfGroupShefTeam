@@ -40,7 +40,6 @@ public class BoardService:IBoardService,IService<Board>
         Board board =await _boardDataSarvice.FindByIdData(data.Id);
         if (board is null)
             return null;
-
         else
         {
             _boardDataSarvice.DeleteData(data.Id);
@@ -76,7 +75,7 @@ public class BoardService:IBoardService,IService<Board>
         if(message is null)
             return;
         message.messageStatus = MessageStatus.NoRead;
-        _messageDataService.CreateData(message);
+        await _messageDataService.CreateData(message);
     }
 
     public async Task<List<Message>> ReadMessageToBoard(long Id)
@@ -87,7 +86,7 @@ public class BoardService:IBoardService,IService<Board>
         foreach (var message in messages)
         {
             message.messageStatus = MessageStatus.Read;
-            _messageDataService.UpdateData(message.Id, message);
+            await _messageDataService.UpdateData(message.Id, message);
         }
         return messages;
     }

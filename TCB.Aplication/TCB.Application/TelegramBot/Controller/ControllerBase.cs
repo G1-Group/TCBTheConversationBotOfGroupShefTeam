@@ -32,7 +32,7 @@ public abstract class ControllerBase
     
     public async Task SendMessage(ControllerContext context , string text)
     {
-        _botClient.SendTextMessageAsync(
+        await _botClient.SendTextMessageAsync(
             chatId: context.Update.Message.Chat.Id,
             parseMode: ParseMode.Html,
             text: text

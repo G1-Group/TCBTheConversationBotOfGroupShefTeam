@@ -23,17 +23,17 @@ public class RegisterController : ControllerBase
         {
             case "Password":
             {
-                Password(context);
+                Password(context).Wait();
                 break;
             }
             case "PhoneNumber":
             {
-                PhoneNumber(context);
+                PhoneNumber(context).Wait();
                 break;
             }
             default:
             {
-                Start(context);
+                Start(context).Wait();
                 break;
             }
             
@@ -50,7 +50,7 @@ public class RegisterController : ControllerBase
 
     public async Task Start(ControllerContext context)
     {
-        SendMessage(context, "Enter your Phone Number✍️");
+        await SendMessage(context, "Enter your Phone Number✍️");
         context.Session.Action = "PhoneNumber";
     }
     
@@ -59,14 +59,14 @@ public class RegisterController : ControllerBase
     {
         if (context.Update.Message.Type != MessageType.Contact)
         {
-            SendMessage(context, "Enter your Phone Number✍️");
+            await SendMessage(context, "Enter your Phone Number✍️");
             return;
         }
 
         User user = await  _userDataService.FindByPhoneNumber(context.Update.Message.Text);
         if (user.PhoneNumber is not null)
         {
-            SendMessage(context, "No such number exists\nor /GoBack");
+            await SendMessage(context, "No such number exists\nor /GoBack");
             return;
         }
 
@@ -75,7 +75,7 @@ public class RegisterController : ControllerBase
             PhoneNumber = context.Update.Message.Text,
             TelegramChatId = context.Update.Message.Chat.Id
         };
-        SendMessage(context, "Enter your Password✍️");
+        await SendMessage(context, "Enter your Password✍️");
         context.Session.Action = "Password";
     }
     
@@ -85,7 +85,7 @@ public class RegisterController : ControllerBase
         
         if (context.Update.Message.Type != MessageType.Text)
         {
-            SendMessage(context, "Enter your Password✍️");
+            await SendMessage(context, "Enter your Password✍️");
             return;
         }
         if (context.Update.Message.Text == "/GoBack")
@@ -98,8 +98,8 @@ public class RegisterController : ControllerBase
 
         if (user is  null)
         {
-            SendMessage(context, "User No found");
-            Start(context);
+            await SendMessage(context, "User No found");
+            Start(context).Wait();
             return;
         }
 
@@ -107,7 +107,7 @@ public class RegisterController : ControllerBase
         context.Session.User = user;
 
         await _userDataService.CreateData(user);
-        SendMessage(context, "Successfully");
+        await SendMessage(context, "Successfully");
         context.Session.Controller = "Login";
         context.Session.Action = null;
     }
@@ -117,13 +117,13 @@ public class RegisterController : ControllerBase
     {
         if (context.Update.Message.Text == "/GoBack")
         {
-            GoBack(context);
+            await GoBack(context);
             return;
         }
 
         if (context.Update.Message.Type != MessageType.Text)
         {
-            SendMessage(context, "Enter your NickName✍️");
+            await SendMessage(context, "Enter your NickName✍️");
         }
         
         
@@ -133,7 +133,7 @@ public class RegisterController : ControllerBase
 
     public async Task GoBack(ControllerContext context)
     {
-        SendMessage(context, "Type a character");
+        await SendMessage(context, "Type a character");
         context.Session.Controller = "Register";
         context.Session.Action = null;
     }

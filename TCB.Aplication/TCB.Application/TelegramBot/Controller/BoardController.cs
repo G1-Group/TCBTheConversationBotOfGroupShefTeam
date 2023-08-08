@@ -64,22 +64,22 @@ public class BoardController:ControllerBase
             return false;
         switch (context.Update.Message.Text)
         {
-            case nameof(CreateBoard):
+            case "/"+nameof(CreateBoard):
             {
                 await CreateBoard(context);
                 return true;
             }
-            case nameof(GoHome):
+            case "/"+nameof(GoHome):
             {
                await GoHome(context);
                 return true;
             }
-            case nameof(GoBack):
+            case "/"+nameof(GoBack):
             {
                 await GoBack(context);
                 return true;
             }
-            case nameof(PrintBoard):
+            case "/"+nameof(PrintBoard):
             {
                 await PrintBoard(context);
                 return true;

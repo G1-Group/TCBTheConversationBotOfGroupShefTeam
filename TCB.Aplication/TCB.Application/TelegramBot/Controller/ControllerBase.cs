@@ -6,7 +6,7 @@ namespace TCB.Aplication.TelegramBot.Managers;
 public abstract class ControllerBase
 {
     protected readonly ITelegramBotClient _botClient;
-    private readonly ControllerManager _controllerManager;
+    protected readonly ControllerManager _controllerManager;
 
     public ControllerBase(ITelegramBotClient botClient, ControllerManager controllerManager)
     {

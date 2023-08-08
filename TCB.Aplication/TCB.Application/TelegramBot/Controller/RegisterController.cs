@@ -10,147 +10,111 @@ namespace TCB.Aplication.TelegramBot.Managers;
 
 public class RegisterController : ControllerBase
 {
-    private readonly UserDataService _userDataService;
+    private readonly AuthService _authService;
 
-    public RegisterController(ITelegramBotClient botClient, UserDataService userDataService,
-        ControllerManager controllerManager) : base(botClient, controllerManager)
+    public RegisterController(ITelegramBotClient botClient , AuthService authService, ControllerManager controllerManager) : base(botClient, controllerManager)
     {
-        _userDataService = userDataService;
+        _authService = authService;   
     }
 
     public override async Task<bool> HandleAction(ControllerContext context)
     {
         switch (context.Session.Action)
         {
-            case nameof(Password):
+
+            case nameof(RegisterStepFirst):
             {
-                Password(context);
-                break;
+                await RegisterStepFirst(context);
+                return true;
             }
-            case nameof(PhoneNumber):
+            case nameof(RegisterStepLast):
             {
-                PhoneNumber(context);
-                break;
+                await RegisterStepLast(context);
+                return true;
+            }
+            case nameof(RegisterStepThird):
+            {
+                await RegisterStepThird(context);
+                return true;
             }
             default:
             {
-                Start(context);
-                break;
+                await RegisterStepStart(context);
+                return true;
             }
         }
-
-        return true;
     }
 
-    public override async Task<bool> HandleUpdate(ControllerContext context)
+    public override async Task<bool>HandleUpdate(ControllerContext context)
     {
-        if (context.Update.Message.Type != MessageType.Text)
-            return false;
-        switch (context.Update.Message.Text)
-        {
-            case "/Registration":
-            {
-                await Start(context);
-                return true;
-            }
-            case "/GoBack":
-            {
-                await GoBack(context);
-                return true;
-            }
-            
-        }
-
-        return false;
+        throw new NotImplementedException();
     }
 
-    public async Task Start(ControllerContext context)
+
+    public async Task RegisterStepStart(ControllerContext context)
     {
         SendMessage(context, "Enter your Phone Number✍️");
-        context.Session.Action = "PhoneNumber";
+        context.Session.Action = nameof(RegisterStepFirst);
     }
 
-
-    public async Task PhoneNumber(ControllerContext context)
+    public async Task RegisterStepFirst(ControllerContext context)
     {
-        if (context.Update.Message.Type != MessageType.Contact)
+        context.Session.RegisterSession.PhoneNumber = context.Update.Message?.Contact?.PhoneNumber;
+        if (string.IsNullOrEmpty(context.Update.Message?.Contact?.PhoneNumber))
         {
-            SendMessage(context, "Enter your number✍️");
+            await SendMessage(context, "Place Enter Your Phone Number ");
             return;
         }
 
-        User user = await _userDataService.FindByPhoneNumber(context.Update.Message.Text);
-        if (user.PhoneNumber is not null)
+        await SendMessage(context,"Enter Your Password");
+        context.Session.Action = nameof(RegisterStepLast);
+    }
+
+    public async Task RegisterStepLast(ControllerContext context)
+    {
+        context.Session.RegisterSession.Password = context.Update.Message?.Text;
+        if (string.IsNullOrEmpty(context.Update.Message?.Text))
         {
-            SendMessage(context, "No such number exists\nor /GoBack");
+            await SendMessage(context, "Place Enter Your Password");
             return;
         }
-
-        context.Session.User = new User()
+        User user = new User()
         {
-            PhoneNumber = context.Update.Message.Text,
-            TelegramChatId = context.Update.Message.Chat.Id
+            PhoneNumber = context.Session.RegisterSession.PhoneNumber,
+            TelegramChatId = context.Update.Message.Chat.Id,
+            Password = context.Session.RegisterSession.Password
         };
-        SendMessage(context, "Enter your Password✍️");
-        context.Session.Action = "Password";
+
+        await SendMessage(context, "Enter Your Nick Name");
+        context.Session.Action = nameof(RegisterStepThird);
     }
 
-
-    public async Task Password(ControllerContext context)
+    public async Task RegisterStepThird(ControllerContext context)
     {
-        if (context.Update.Message.Type != MessageType.Text)
+        context.Session.RegisterSession.NickName = context.Update.Message?.Text;
+        if (string.IsNullOrEmpty(context.Update.Message?.Text))
         {
-            SendMessage(context, "Enter your Password✍️");
+            await SendMessage(context,"Place Enter Your NickName");
             return;
         }
 
-        if (context.Update.Message.Text == "/"+ nameof(GoBack))
+        
+        if (context.Session.RegisterSession.NickName != null)
         {
-            await GoBack(context);
-            return;
+            var result=await _authService.Registration(context.Session.User, context.Session.RegisterSession.NickName);
+            if (result is null)
+            {
+                await SendMessage(context, "the error is in the user base");
+                await RegisterStepStart(context);
+                return;
+            }
+            context.Session.User = result;
         }
-
-        User user = await _userDataService.FindByChatId(context.Update.Message.Chat.Id);
-
-        if (user is null)
-        {
-            SendMessage(context, "User No found");
-            Start(context);
-            return;
-        }
-
-        user.Password = context.Update.Message.Text;
-        context.Session.User = user;
-
-        await _userDataService.CreateData(user);
-        SendMessage(context, "Successfully");
-        context.Session.Controller = "Login";
+        
+        context.Session.Controller = nameof(LoginController);
+        await SendMessage(context, "You are registered Successfully");
         context.Session.Action = null;
+        await _controllerManager._loginController.Handle(context);
     }
 
-
-    public async Task NickName(ControllerContext context)
-    {
-        if (context.Update.Message.Text == "/"+ nameof(GoBack))
-        {
-            GoBack(context);
-            return;
-        }
-
-        if (context.Update.Message.Type != MessageType.Text)
-        {
-            SendMessage(context, "Enter your NickName✍️");
-        }
-
-
-        context.Session.Action = "Password";
-    }
-
-
-    public async Task GoBack(ControllerContext context)
-    {
-        SendMessage(context, "Type a character");
-        context.Session.Controller = "Register";
-        context.Session.Action = null;
-    }
 }

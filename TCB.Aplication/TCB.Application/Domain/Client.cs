@@ -9,7 +9,7 @@ public class Client : ModelBase
     [Description("chat_id")]
     public long TelegramChatId { get; set; }
     [Description("nick_name")]
-    public string NickName { get; set; }
+    public string? NickName { get; set; }
     [Description("is_premium")]
     public bool IsPremium { get; set; }
     [Description("status")]

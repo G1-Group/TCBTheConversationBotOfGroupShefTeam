@@ -17,13 +17,13 @@ public class ManagerSession:ISessionManager
     public async Task<Session> GetSessionByChatId(long chatId)
     {
         User user = await _userDataService.FindByChatId(chatId);
-        var session = Sessions.Find(x => x.ChatId== chatId);
+        var session = Sessions.Find(x => x.TelegramChatId== chatId);
         if (session is null)
         {
             session = new Session()
             {
                 Id = 1,
-                ChatId = chatId
+                TelegramChatId = chatId
             };
             Sessions.Add(session);
             return session;

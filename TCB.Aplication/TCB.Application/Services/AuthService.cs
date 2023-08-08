@@ -17,7 +17,7 @@ public class AuthService :  IAuthService
     
     
     
-    public async Task<User> Registration(User user,string NickName)
+    public async Task<User> Registration(User user,string? NickName)
     {
         if (string.IsNullOrEmpty(NickName) || user is null)
         {

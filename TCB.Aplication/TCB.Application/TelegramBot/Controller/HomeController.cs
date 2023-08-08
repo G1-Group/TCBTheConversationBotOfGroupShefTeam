@@ -47,6 +47,16 @@ public class HomeController : ControllerBase
                 await Help(context);
                 return true;
             }
+            case "/Login":
+            {
+                await _controllerManager._loginController.Handle(context);
+                return true;
+            }
+            case "/Register":
+            {
+                await _controllerManager._registerController.Handle(context);
+                return true;
+            }
             
         }
 

@@ -5,26 +5,24 @@ namespace TCB.Aplication.TelegramBot.Managers;
 
 public class ControllerManager
 {
-    public readonly HomeController _homeController;
-    public readonly LoginController _loginController;
-    public ControllerManager(ITelegramBotClient client, UserDataService userDataService)
+    public BoardController _boardController;
+    public LoginController _loginController;
+    public RegisterController _registerController;
+    public HomeController _homeController;
+
+    public ControllerManager(LoginController loginController, BoardController boardController, RegisterController registerController, HomeController homeController)
     {
-        this._loginController = new LoginController(client, userDataService, this);
+        _loginController = loginController;
+        _boardController = boardController;
+        _registerController = registerController;
+        _homeController = homeController;
     }
 
     public ControllerBase GetControllerBySessionData(Session session)
     {
         //will check controllers by session.Conrtoller and return founded;
-
-        switch (session.Controller)
-        {
-            case nameof(LoginController):
-                return this._loginController;
-            
-            default:
-                return this._homeController;
-        }
-
         return null;
     }
+    
+    
 }

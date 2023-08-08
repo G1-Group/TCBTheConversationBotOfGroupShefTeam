@@ -8,35 +8,34 @@ namespace TCB.Aplication.TelegramBot.Managers;
 
 public class LoginController:ControllerBase
 {
-    private readonly UserDataService _userDataService;
+    private readonly AuthService _authService;
 
     private string userLogin = null;
     private string userPassword = null;
-    public LoginController(ITelegramBotClient botClient, UserDataService userDataService, ControllerManager controllerManager) : base(botClient, controllerManager)
+    public LoginController(ITelegramBotClient botClient,AuthService authService, ControllerManager controllerManager) : base(botClient, controllerManager)
     {
-        _userDataService = userDataService;
+        _authService = authService;
     }
 
     public override async Task<bool> HandleAction(ControllerContext context)
     {
         switch (context.Session.Action)
         {
-            case nameof(LoginStepStart):
-            {
-                await LoginStepStart(context);
-                return true;
-            }
             case nameof(LoginStepFirst):
             {
-                await LoginStepFirst(context);
+                LoginStepFirst(context).Wait();
                 return true;
             }
             case nameof(LoginStepLast):
             {
-                await LoginStepLast(context);
+                LoginStepLast(context).Wait();
                 return true;
             }
-          
+            default:
+            {
+                LoginStepStart(context).Wait();
+                return true;
+            }
         }
 
         return false;
@@ -44,45 +43,24 @@ public class LoginController:ControllerBase
 
     public override async Task<bool> HandleUpdate(ControllerContext context)
     {
-        if (context.Update.Message.Type != MessageType.Text)
-            return false;
-        switch (context.Update.Message.Text)
-        {
-            
-            case "/Login":
-            {
-                await LoginStepStart(context);
-                return true;
-            }
-           
-            
-        }
-
-        return false;
+        return true;
     }
 
    
-    
+
 
     public async Task LoginStepStart(ControllerContext context)
     {
-        await SendMessage(context, "Enter your Login: ");
+        await SendMessage(context, "Enter your Phone Number: ");
 
         context.Session.Action = nameof(LoginStepFirst);
     }
     
     public async Task LoginStepFirst(ControllerContext context)
     {
-        if (context.Update.Message.Type != MessageType.Text)
-        {
-             await this.SendMessage(context, "Please send message ");
-            await LoginStepStart(context);
-            return;
-        }
+        context.Session.LoginSession.PhoneNumber = context.Update.Message?.Contact.PhoneNumber;
         
-        context.Session.UserLogin = context.Update.Message.Text;
-        
-        if (string.IsNullOrEmpty(context.Session.UserLogin))
+        if (string.IsNullOrEmpty(context.Session.LoginSession.Password))
         {
             await SendMessage(context, "Wrong login: ");
             return;
@@ -93,18 +71,28 @@ public class LoginController:ControllerBase
 
     public async Task LoginStepLast(ControllerContext context)
     {
-        context.Session.UserPassword = context.Update.Message?.Text;
+        context.Session.LoginSession.Password = context.Update.Message?.Text;
         
-        if (string.IsNullOrEmpty(context.Session.UserPassword))
+        if (string.IsNullOrEmpty(context.Session.LoginSession.Password))
         {
             await SendMessage(context, "Wrong password: ");
             return;
         }
-        
-        await SendMessage(context, $"Login: {context.Session.UserLogin}\nPassword: {context.Session.UserPassword}");
 
-        context.Session.Controller = null;
+        Client client = await _authService.Login(context.Session.LoginSession.PhoneNumber, context.Session.LoginSession.Password);
+        if (client is null)
+        {
+            await SendMessage(context, "not found !");
+            await LoginStepStart(context);
+            return;
+        }
+        
+        await SendMessage(context, $"Login: {context.Session.LoginSession.PhoneNumber}\nPassword: {context.Session.LoginSession.Password}");
+        
+        context.Session.ClientId = client.Id;
+        context.Session.Controller = nameof(HomeController);
         context.Session.Action = null;
+        await _controllerManager._homeController.Handle(context);
     }
 }
 

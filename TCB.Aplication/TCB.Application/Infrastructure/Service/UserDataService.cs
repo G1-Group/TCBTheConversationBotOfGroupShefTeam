@@ -106,7 +106,7 @@ public class UserDataService : DataProvider
         return users.FirstOrDefault();
     }
 
-    public async Task<User> FindByPhoneNumber(string phoneNumber)
+    public async Task<User> FindByPhoneNumber(string? phoneNumber)
     {
         var result = await ExecuteWithResult(QueryUser.SelectByPhoneNumberQuery, new NpgsqlParameter[]
         {

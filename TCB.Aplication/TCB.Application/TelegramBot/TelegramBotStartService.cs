@@ -36,7 +36,7 @@ public class TelegramBotStartService
         this._userDataService = new UserDataService(Settings.DbConnectionString);
         
         
-        this._controllerManager = new ControllerManager(_telegramBotClient, _userDataService);
+       // this._controllerManager = new ControllerManager(_telegramBotClient, _userDataService);
         this._sessionManager = new ManagerSession(this._userDataService);
     }
 
@@ -45,7 +45,7 @@ public class TelegramBotStartService
         //Register any handlers
         _handlers.Add(context =>
         {
-            Console.WriteLine("{0}| {1}", context.Session.ChatId, context.Update.Message?.Text ?? "No message content.");
+            Console.WriteLine("{0}| {1}", context.Session.TelegramChatId, context.Update.Message?.Text ?? "No message content.");
         });
         
         //Authorization
@@ -67,7 +67,7 @@ public class TelegramBotStartService
         _handlers.Insert(_handlers.Count, (context) =>
         {
             ControllerBase controllerBase = this._controllerManager.GetControllerBySessionData(context.Session);
-             controllerBase.Handle(context);
+              controllerBase.Handle(context);
         });
         
         

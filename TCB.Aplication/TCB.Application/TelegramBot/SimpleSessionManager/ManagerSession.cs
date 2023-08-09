@@ -7,11 +7,12 @@ namespace TCB.Aplication.TelegramBot.Managers;
 public class ManagerSession:ISessionManager
 {
     private readonly UserDataService _userDataService;
-    public List<Session> Sessions { get; set; } = new List<Session>();
+    public List<Session> Sessions { get; set; } 
 
     public ManagerSession(UserDataService userDataService)
     {
         _userDataService = userDataService;
+        Sessions = new List<Session>();
     }
 
     public async Task<Session> GetSessionByChatId(long chatId)

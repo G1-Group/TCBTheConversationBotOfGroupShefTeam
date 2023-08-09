@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using TCB.Aplication.Infrastructure.Service;
 using TCB.Aplication.Services;
 using Telegram.Bot;
@@ -17,7 +18,7 @@ public class RegisterController : ControllerBase
         _authService = authService;   
     }
 
-    public override async Task<bool> HandleAction(ControllerContext context)
+    protected override async Task<bool> HandleAction(ControllerContext context)
     {
         switch (context.Session.Action)
         {
@@ -45,14 +46,16 @@ public class RegisterController : ControllerBase
         }
     }
 
-    public override async Task<bool>HandleUpdate(ControllerContext context)
+    protected override async Task<Task> HandleUpdate(ControllerContext context)
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
-
+     
+    
 
     public async Task RegisterStepStart(ControllerContext context)
     {
+        
         SendMessage(context, "Enter your Phone Number✍️");
         context.Session.Action = nameof(RegisterStepFirst);
     }
@@ -115,6 +118,32 @@ public class RegisterController : ControllerBase
         await SendMessage(context, "You are registered Successfully");
         context.Session.Action = null;
         await _controllerManager._loginController.Handle(context);
+    }
+    
+    public bool IsValidPhone(string Phone)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(Phone))
+                return false;
+            var r = new Regex(@"^\+998([- ])?(90|91|93|94|95|98|99|33|97|71)([- ])?(\d{3})([- ])?(\d{2})([- ])?(\d{2})$");
+            return r.IsMatch(Phone);
+
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+    public static bool IsValidPassword(string text)
+    {
+        bool result = text.Length >= 7 && text.Length <= 16
+                                       && Regex.IsMatch(text, "[A-Z]")
+                                       && Regex.IsMatch(text, "[a-z]")
+                                       && Regex.IsMatch(text, @"\d")
+                                       && Regex.IsMatch(text, @"[!-/:-@\[-_{-~]")
+                                       && !Regex.IsMatch(text, @"[^\dA-Za-z!-/:-@\[-_{-~]");
+        return result;
     }
 
 }

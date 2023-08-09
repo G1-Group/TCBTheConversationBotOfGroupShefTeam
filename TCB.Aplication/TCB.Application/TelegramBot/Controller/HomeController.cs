@@ -7,11 +7,12 @@ namespace TCB.Aplication.TelegramBot.Managers;
 
 public class HomeController : ControllerBase
 {
-    public HomeController(ITelegramBotClient botClient, ControllerManager controllerManager) : base(botClient, controllerManager)
+    
+    public HomeController(ITelegramBotClient botClient , ControllerManager controllerManager ) : base(botClient, controllerManager)
     {
     }
 
-    public override async Task<bool> HandleAction(ControllerContext context)
+    protected override async Task<bool> HandleAction(ControllerContext context)
     {
         switch (context.Session.Action)
         {
@@ -31,36 +32,36 @@ public class HomeController : ControllerBase
         return true;
     }
 
-    public override async Task<bool> HandleUpdate(ControllerContext context)
+    protected override async Task<Task> HandleUpdate(ControllerContext context)
     {
         if (context.Update.Message.Type != MessageType.Text)
-            return false;
+             return null;
         switch (context.Update.Message.Text)
         {
             case "/"+nameof(About):
             {
                 await About(context);
-                return true;
+               break;
             }
             case "/"+nameof(Help):
             {
                 await Help(context);
-                return true;
+                break;
             }
             case "/Login":
             {
                 await _controllerManager._loginController.Handle(context);
-                return true;
+                break;
             }
             case "/Register":
             {
                 await _controllerManager._registerController.Handle(context);
-                return true;
+                break;
             }
             
         }
 
-        return false;
+        return null;
     }
 
     public async Task About(ControllerContext context)

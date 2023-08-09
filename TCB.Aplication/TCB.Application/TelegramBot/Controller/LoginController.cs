@@ -17,7 +17,7 @@ public class LoginController:ControllerBase
         _authService = authService;
     }
 
-    public override async Task<bool> HandleAction(ControllerContext context)
+    protected override async Task<bool> HandleAction(ControllerContext context)
     {
         switch (context.Session.Action)
         {
@@ -41,9 +41,9 @@ public class LoginController:ControllerBase
         return false;
     }
 
-    public override async Task<bool> HandleUpdate(ControllerContext context)
+    protected override async Task<Task> HandleUpdate(ControllerContext context)
     {
-        return true;
+        return Task.CompletedTask;
     }
 
    
@@ -54,6 +54,7 @@ public class LoginController:ControllerBase
         await SendMessage(context, "Enter your Phone Number: ");
 
         context.Session.Action = nameof(LoginStepFirst);
+        await LoginStepFirst(context);
     }
     
     public async Task LoginStepFirst(ControllerContext context)
@@ -67,6 +68,7 @@ public class LoginController:ControllerBase
         }
         await SendMessage(context, "Enter your password: ");
         context.Session.Action = nameof(LoginStepLast);
+        await LoginStepLast(context);
     }
 
     public async Task LoginStepLast(ControllerContext context)

@@ -17,7 +17,7 @@ public class BoardController:ControllerBase
         _boardService = boardService;
     }
 
-    public override async Task<bool> HandleAction(ControllerContext context)
+    protected override async Task<bool> HandleAction(ControllerContext context)
     {
         switch (context.Session.Action)
         {
@@ -63,35 +63,9 @@ public class BoardController:ControllerBase
         return false;
     }
 
-    public override async Task<bool> HandleUpdate(ControllerContext context)
+    protected override async Task<Task> HandleUpdate(ControllerContext context)
     {
-        if (context.Update.Message.Type != MessageType.Text)
-            return false;
-        switch (context.Update.Message.Text)
-        {
-            case "/"+nameof(CreateBoard):
-            {
-                await CreateBoard(context);
-                return true;
-            }
-            case "/"+nameof(GoHome):
-            {
-               await GoHome(context);
-                return true;
-            }
-            case "/"+nameof(GoBack):
-            {
-                await GoBack(context);
-                return true;
-            }
-            case "/"+nameof(PrintBoard):
-            {
-                await PrintBoard(context);
-                return true;
-            }
-        }
-
-        return false;
+        return Task.CompletedTask;
     }
 
     public async Task CreateBoard(ControllerContext context)

@@ -2,6 +2,7 @@
 using TCB.Aplication.Infrastructure.Service;
 using TCB.Aplication.Infrastructure.Service.Interface;
 using TCB.Aplication.Services;
+using TCB.Aplication.TelegramBot.Context.Extension;
 using TCB.Aplication.TelegramBot.Managers;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
@@ -15,62 +16,69 @@ public class TelegramBotStartService
 
     private TelegramBotClient _telegramBotClient;
 
-    private List<Action<ControllerContext>> _handlers =
-        new List<Action<ControllerContext>>();
+   
+       
 
     private readonly ControllerManager _controllerManager;
+  
     private readonly ManagerSession _sessionManager;
 
     private readonly UserDataService _userDataService;
+    private ClientDataService _clientDataService;
+    private MessageDataServise _messageDataServise;
+    private BoardDataSarvice _boardDataSarvice;
 
-    private readonly List<string> authRequiredControllers = new List<string>()
-    {
-        
-    };
+    private AuthService _authService;
+    private BoardService _boardService;
+    
+    private List<Func<ControllerContext, CancellationToken, Task>> updateHandlers { get; set; }
+    
 
     public TelegramBotStartService()
     {
-        // string botToken = "6271788643:AAE1cjCIemAYlNnVlp6YxczwldYuVj8dGQE";
+        //DataServices
+        _userDataService = new UserDataService(Settings.DbConnectionString);
+        _clientDataService = new ClientDataService(Settings.DbConnectionString);
+        _messageDataServise = new MessageDataServise(Settings.DbConnectionString);
+        _boardDataSarvice = new BoardDataSarvice(Settings.DbConnectionString);
+        //services
+        _authService = new AuthService(_clientDataService,_userDataService);
+        _boardService = new BoardService(_boardDataSarvice, _messageDataServise);
+        
+       
         this._telegramBotClient = new TelegramBotClient(Settings.BotToken);
-
-        this._userDataService = new UserDataService(Settings.DbConnectionString);
         
+        _controllerManager = new ControllerManager(_telegramBotClient, _authService, _boardService);
         
-       // this._controllerManager = new ControllerManager(_telegramBotClient, _userDataService);
+        updateHandlers = new List<Func<ControllerContext, CancellationToken, Task>>();
+        
         this._sessionManager = new ManagerSession(this._userDataService);
     }
 
     public async Task Start()
     {
-        //Register any handlers
-        _handlers.Add(context =>
+        
+        
+        //session handler
+        updateHandlers.Add(async (context, token) =>
         {
-            Console.WriteLine("{0}| {1}", context.Session.TelegramChatId, context.Update.Message?.Text ?? "No message content.");
+            if (context.Update?.Message?.Chat.Id is null)
+                throw new Exception("Chat id not found to find session");
+            
+            var session = await _sessionManager.GetSessionByChatId(context.Update.Message.Chat.Id);
+            context.Session = session;
         });
         
-        //Authorization
-        _handlers.Add(context =>
+        //Log handler
+        updateHandlers.Add(async (context, token) =>
         {
-            var controllerName = context.Session.Controller;
-            if (this.authRequiredControllers.Find(x => x == controllerName) != null)
-            {
-                if (context.Session?.User is null)
-                    _telegramBotClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Error: Auth required!").Wait();
-            }
+            Console.WriteLine("Log -> {0} | {1} | {2}", DateTime.Now, context.Session.TelegramChatId, context.Update.Message?.Text ?? context.Update.Message?.Caption);
         });
-        
-        
-        
-        
-        
-        //Map to controller
-        _handlers.Insert(_handlers.Count, (context) =>
+        //add func in handler
+        updateHandlers.Insert(updateHandlers.Count, async (context, token) =>
         {
-            ControllerBase controllerBase = this._controllerManager.GetControllerBySessionData(context.Session);
-              controllerBase.Handle(context);
+            await context.Forward(_controllerManager);
         });
-        
-        
         
         await StartReceiver();
     }
@@ -86,31 +94,23 @@ public class TelegramBotStartService
         }), ErrorMessage, options, cancellationToken);
     }
     
-    private async Task OnUpdate(ITelegramBotClient telegramBotClient, Update update, CancellationToken cancellationToken)
+    private async Task OnUpdate(ITelegramBotClient bot, Update update, CancellationToken token)
     {
+        ControllerContext context = new ControllerContext()
+        {
+            Update = update
+        };
+        
         try
         {
-            ControllerContext controllerContext = new ControllerContext()
-            {
-                Session = await this._sessionManager.GetSessionByChatId(update.Message.Chat.Id),
-                Update = update
-            };
-            foreach (var handler in this._handlers)
-                // task
-                //     .ContinueWith((prevTask) =>
-                //     {
-                //         prevTask.Wait(cancellationToken);
-                //         handler(controllerContext);
-                //     }, cancellationToken, TaskContinuationOptions.OnlyOnRanToCompletion);
-
-                handler(controllerContext);
+            foreach (var updateHandler in this.updateHandlers)
+                await updateHandler(context, token);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Console.WriteLine("Handler Error: " + e.Message);
         }
-
-        return;
+        
     }
     
     private async Task ErrorMessage(ITelegramBotClient telegramBotClient, Exception exception, CancellationToken cancellationToken)

@@ -1,3 +1,4 @@
+using TCB.Aplication.TelegramBot.Context.Extension;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 
@@ -6,28 +7,24 @@ namespace TCB.Aplication.TelegramBot.Managers;
 public abstract class ControllerBase
 {
     protected readonly ITelegramBotClient _botClient;
-    protected readonly ControllerManager _controllerManager;
+    public readonly ControllerManager _controllerManager;
 
-    public ControllerBase(ITelegramBotClient botClient, ControllerManager controllerManager)
+
+    public ControllerBase(ITelegramBotClient botClient , 
+        ControllerManager controllerManager)
     {
         _botClient = botClient;
         _controllerManager = controllerManager;
     }
-    public abstract Task<bool> HandleAction(ControllerContext context);
+   
 
-    public abstract Task<bool> HandleUpdate(ControllerContext context);
+    protected abstract Task HandleAction(ControllerContext context);
+    protected abstract Task<Task> HandleUpdate(ControllerContext context);
 
-    public virtual async Task Handle(ControllerContext context)
+    public async Task Handle(ControllerContext context)
     {
-        var updateHandled = this.HandleUpdate(context);
-
-        if (!await updateHandled)
-        {
-            var controllerBase = _controllerManager.GetControllerBySessionData(context.Session);
-            controllerBase.Handle(context);
-        }
-        else 
-            this.HandleAction(context);
+        await this.HandleUpdate(context);
+        await this.HandleAction(context);
     }
     
     public async Task SendMessage(ControllerContext context , string text)
@@ -39,9 +36,6 @@ public abstract class ControllerBase
         );
     }
 
-    public async Task Start(ControllerContext context)
-    {
-        
-    }
+    
     
 }

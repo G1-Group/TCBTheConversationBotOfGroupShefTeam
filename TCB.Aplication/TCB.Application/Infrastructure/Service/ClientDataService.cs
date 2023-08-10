@@ -41,7 +41,6 @@ public class ClientDataService : DataProvider
     {
         var result = await this.ExecuteNonResult(QueryClient.InsertQuery, new NpgsqlParameter[]
         {
-            new NpgsqlParameter("@p0", Id),
             new NpgsqlParameter("@p1", data.UserId),
             new NpgsqlParameter("@p2", data.TelegramChatId),
             new NpgsqlParameter("@p3", data.NickName),
@@ -77,7 +76,7 @@ public class ClientDataService : DataProvider
 
         while (result.Read())
             clients.Add(ReaderDataModel(result));
-            return clients.FirstOrDefault();
+        return clients.FirstOrDefault();
         
         
     }
@@ -141,7 +140,7 @@ public class ClientDataService : DataProvider
             UserId = reader.GetInt64(1),
             TelegramChatId = reader.GetInt64(2),
             NickName = reader.GetString(3),
-            //Status = reader.GetChars(4),
+            Status = (ClientStatus)reader.GetInt64(4),
             IsPremium = reader.GetBoolean(5),
             ClientInAnonymChat = reader.GetBoolean(6)
             

@@ -13,7 +13,7 @@ public class RegisterController : ControllerBase
 {
     private readonly AuthService _authService;
 
-    public RegisterController(ITelegramBotClient botClient , AuthService authService, ControllerManager controllerManager) : base(botClient, controllerManager)
+    public RegisterController(ITelegramBotClient botClient , AuthService authService, ControllerManager controllerManager) : base(controllerManager)
     {
         _authService = authService;   
     }
@@ -58,6 +58,11 @@ public class RegisterController : ControllerBase
         
         SendMessage(context, "Enter your Phone Number✍️");
         context.Session.Action = nameof(RegisterStepFirst);
+    }
+
+    private Task SendMessage(ControllerContext context, string enterYourPhoneNumber)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task RegisterStepFirst(ControllerContext context)

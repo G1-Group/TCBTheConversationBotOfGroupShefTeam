@@ -17,7 +17,7 @@ public class ControllerManager
         _loginController = new LoginController(botClient,authService,this);
         _boardController = new BoardController(botClient, boardService, this);
         _registerController = new RegisterController(botClient, authService, this );
-        _homeController = new HomeController(botClient, this);
+        _homeController = new HomeController( this);
     }
 
     public ControllerBase GetControllerBySessionData(Session session)

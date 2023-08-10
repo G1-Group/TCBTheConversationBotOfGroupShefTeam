@@ -14,7 +14,7 @@ namespace TCB.Aplication.TelegramBot;
 public class TelegramBotStartService
 {
 
-    private TelegramBotClient _telegramBotClient;
+    public static TelegramBotClient _telegramBotClient { get; set; }
 
    
        
@@ -46,7 +46,7 @@ public class TelegramBotStartService
         _boardService = new BoardService(_boardDataSarvice, _messageDataServise);
         
        
-        this._telegramBotClient = new TelegramBotClient(Settings.BotToken);
+       // this._telegramBotClient = new TelegramBotClient(Settings.BotToken);
         
         _controllerManager = new ControllerManager(_telegramBotClient, _authService, _boardService);
         

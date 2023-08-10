@@ -12,7 +12,7 @@ public class LoginController:ControllerBase
 
     private string userLogin = null;
     private string userPassword = null;
-    public LoginController(ITelegramBotClient botClient,AuthService authService, ControllerManager controllerManager) : base(botClient, controllerManager)
+    public LoginController(ITelegramBotClient botClient,AuthService authService, ControllerManager controllerManager) : base(controllerManager)
     {
         _authService = authService;
     }
@@ -69,6 +69,11 @@ public class LoginController:ControllerBase
         await SendMessage(context, "Enter your password: ");
         context.Session.Action = nameof(LoginStepLast);
         await LoginStepLast(context);
+    }
+
+    private async Task SendMessage(ControllerContext context, string wrongLogin)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task LoginStepLast(ControllerContext context)

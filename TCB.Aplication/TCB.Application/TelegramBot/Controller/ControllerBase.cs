@@ -6,14 +6,12 @@ namespace TCB.Aplication.TelegramBot.Managers;
 
 public abstract class ControllerBase
 {
-    protected readonly ITelegramBotClient _botClient;
     public readonly ControllerManager _controllerManager;
 
 
-    public ControllerBase(ITelegramBotClient botClient , 
+    public ControllerBase(
         ControllerManager controllerManager)
     {
-        _botClient = botClient;
         _controllerManager = controllerManager;
     }
    
@@ -27,15 +25,7 @@ public abstract class ControllerBase
         await this.HandleAction(context);
     }
     
-    public async Task SendMessage(ControllerContext context , string text)
-    {
-        _botClient.SendTextMessageAsync(
-            chatId: context.Update.Message.Chat.Id,
-            parseMode: ParseMode.Html,
-            text: text
-        );
-    }
-
+    
     
     
 }

@@ -8,7 +8,7 @@ namespace TCB.Aplication.TelegramBot.Managers;
 public class HomeController : ControllerBase
 {
     
-    public HomeController(ITelegramBotClient botClient , ControllerManager controllerManager ) : base(botClient, controllerManager)
+    public HomeController( ControllerManager controllerManager ) : base( controllerManager)
     {
     }
 
@@ -82,6 +82,11 @@ This bot is for you to learn a language or
  remains confidential.");
         
         context.Session.Action = "About";
+    }
+
+    private async Task SendMessage(ControllerContext context, string s)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task Help(ControllerContext context)

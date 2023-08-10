@@ -12,7 +12,7 @@ public class BoardController:ControllerBase
 {
     private readonly BoardService _boardService;
 
-    public BoardController(ITelegramBotClient botClient,BoardService boardService, ControllerManager controllerManager) : base(botClient, controllerManager)
+    public BoardController(ITelegramBotClient botClient,BoardService boardService, ControllerManager controllerManager) : base( controllerManager)
     {
         _boardService = boardService;
     }
@@ -90,6 +90,11 @@ public class BoardController:ControllerBase
 
         await SendMessage(context, "whether you write on the board or go back \n/Write  /GoBack");
         context.Session.Action = nameof(WriteMessageToBoard);
+    }
+
+    private async Task SendMessage(ControllerContext context, string boardNickName)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task WriteToBoardOrGoBack(ControllerContext context)

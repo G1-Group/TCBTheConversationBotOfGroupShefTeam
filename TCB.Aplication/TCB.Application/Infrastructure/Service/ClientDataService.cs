@@ -23,7 +23,6 @@ public class ClientDataService : DataProvider
     {
         var result = await this.ExecuteNonResult(QueryClient.InsertQuery, new NpgsqlParameter[]
         {
-            new NpgsqlParameter("@p0", data.Id),
             new NpgsqlParameter("@p1", data.UserId),
             new NpgsqlParameter("@p2", data.TelegramChatId),
             new NpgsqlParameter("@p3", data.NickName),

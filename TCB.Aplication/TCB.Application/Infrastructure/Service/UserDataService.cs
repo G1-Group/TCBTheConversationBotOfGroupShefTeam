@@ -19,7 +19,6 @@ public class UserDataService : DataProvider
     {
         var result = await ExecuteNonResult(QueryUser.InsertQuery, new NpgsqlParameter[]
         {
-            new NpgsqlParameter("@p0", data.Id),
             new NpgsqlParameter("@p1", data.TelegramChatId),
             new NpgsqlParameter("@p2", data.PhoneNumber),
             new NpgsqlParameter("@p3", data.Password)

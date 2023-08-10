@@ -1,4 +1,5 @@
 using Telegram.Bot;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
 namespace TCB.Aplication.TelegramBot.Managers;
@@ -41,7 +42,8 @@ public abstract class ControllerBase
 
     public async Task Start(ControllerContext context)
     {
-        
+        await SendMessage(context, "Welcome");
+        await _controllerManager._homeController.HandleAction(context);
     }
-    
+
 }

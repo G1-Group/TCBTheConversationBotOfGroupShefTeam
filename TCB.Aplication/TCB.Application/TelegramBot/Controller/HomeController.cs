@@ -9,6 +9,7 @@ public class HomeController : ControllerBase
 {
     public HomeController(ITelegramBotClient botClient, ControllerManager controllerManager) : base(botClient, controllerManager)
     {
+        
     }
 
     public override async Task<bool> HandleAction(ControllerContext context)
@@ -33,32 +34,61 @@ public class HomeController : ControllerBase
 
     public override async Task<bool> HandleUpdate(ControllerContext context)
     {
-        if (context.Update.Message.Type != MessageType.Text)
-            return false;
-        switch (context.Update.Message.Text)
+        var update = context.Update;
+        if (update.Type == UpdateType.Message && update.Message!.Type != MessageType.Text)
         {
-            case "/"+nameof(About):
+            var text = update.Message.Text;
+            if (text is not null)
             {
-                await About(context);
-                return true;
+                switch (text)
+                {
+                    case "/start":
+                        await _controllerManager._loginController.Start(context);
+                        break;
+                    case "/login":
+                        await _controllerManager._loginController.Handle(context);
+                        break;
+                    case "/register":
+                        await _controllerManager._registerController.Handle(context);
+                        break;
+                    case "/about":
+                        await this.About(context);
+                        break;
+                    case "/help":
+                        await this.Help(context);
+                        break;
+                    case "/go back":
+                        await _controllerManager._boardController.GoBack(context);
+                        break;
+                }
             }
-            case "/"+nameof(Help):
-            {
-                await Help(context);
-                return true;
-            }
-            case "/Login":
-            {
-                await _controllerManager._loginController.Handle(context);
-                return true;
-            }
-            case "/Register":
-            {
-                await _controllerManager._registerController.Handle(context);
-                return true;
-            }
-            
         }
+        // if (context.Update.Message.Type != MessageType.Text)
+        //     return false;
+        // switch (context.Update.Message.Text)
+        // {
+        //     case "/"+nameof(About):
+        //     {
+        //         await About(context);
+        //         return true;
+        //     }
+        //     case "/"+nameof(Help):
+        //     {
+        //         await Help(context);
+        //         return true;
+        //     }
+        //     case "/Login":
+        //     {
+        //         await _controllerManager._loginController.Handle(context);
+        //         return true;
+        //     }
+        //     case "/Register":
+        //     {
+        //         await _controllerManager._registerController.Handle(context);
+        //         return true;
+        //     }
+            
+       // }
 
         return false;
     }
@@ -102,6 +132,5 @@ following support staff.
 +998947774444");
         context.Session.Action = "Help";
     }
-    
     
 }

@@ -25,7 +25,7 @@ public class UserDataService : DataProvider
             new NpgsqlParameter("@p3", data.Password)
         });
 
-        return await FindByIdData(data.Id);
+        return await FindByPhoneNumber(data.PhoneNumber);
     }
 
     

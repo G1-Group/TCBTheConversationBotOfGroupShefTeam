@@ -19,7 +19,7 @@ public abstract class ControllerBase
    
 
     protected abstract Task HandleAction(ControllerContext context);
-    protected abstract Task<Task> HandleUpdate(ControllerContext context);
+    protected abstract Task HandleUpdate(ControllerContext context);
 
     public async Task Handle(ControllerContext context)
     {
@@ -29,7 +29,7 @@ public abstract class ControllerBase
     
     public async Task SendMessage(ControllerContext context , string text)
     {
-        _botClient.SendTextMessageAsync(
+        await _botClient.SendTextMessageAsync(
             chatId: context.Update.Message.Chat.Id,
             parseMode: ParseMode.Html,
             text: text

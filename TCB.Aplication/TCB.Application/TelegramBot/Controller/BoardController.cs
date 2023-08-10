@@ -171,12 +171,8 @@ public class BoardController:ControllerBase
 
         await Start(context);
     }
-
     public async Task Start(ControllerContext context)
     {
         await SendMessage(context, "Board Create /CreateBoard\nBoard All List /AllBoard");
     }
-    
-    
-    
 }

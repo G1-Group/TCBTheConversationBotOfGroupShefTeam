@@ -26,12 +26,16 @@ public class ControllerManager
         switch (session.Controller)
         {
             case nameof(HomeController):
+                session.Controller = nameof(HomeController);
                 return this._homeController;
             case nameof(LoginController):
+                session.Controller = nameof(LoginController);
                 return this._loginController;
             case nameof(RegisterController):
+                session.Controller = nameof(RegisterController);
                 return this._registerController;
             case nameof(BoardController):
+                session.Controller = nameof(BoardController);
                 return this._boardController;
             
         }

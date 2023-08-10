@@ -1,5 +1,6 @@
 using TCB.Aplication.Infrastructure.Service;
 using TCB.Aplication.Services;
+using TCB.Aplication.TelegramBot.Context.Extension;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 
@@ -50,12 +51,14 @@ public class HomeController : ControllerBase
             }
             case "/Login":
             {
-                await _controllerManager._loginController.Handle(context);
+                context.Session.Controller = nameof(LoginController);
+                await ContextExtension.Forward(context, _controllerManager);
                 break;
             }
             case "/Register":
             {
-                await _controllerManager._registerController.Handle(context);
+                context.Session.Controller = nameof(RegisterController);
+                await ContextExtension.Forward(context, _controllerManager);
                 break;
             }
             

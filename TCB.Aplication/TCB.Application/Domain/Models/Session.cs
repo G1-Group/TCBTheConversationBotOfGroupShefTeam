@@ -15,4 +15,11 @@ public class Session
     public LoginSession LoginSession { get; set; }
     public RegisterSession RegisterSession { get; set; }
     public BoardSession BoardSession { get; set; }
+
+    public Session()
+    {
+        this.LoginSession = new LoginSession();
+        this.RegisterSession = new RegisterSession();
+        this.BoardSession = new BoardSession();
+    }
 }

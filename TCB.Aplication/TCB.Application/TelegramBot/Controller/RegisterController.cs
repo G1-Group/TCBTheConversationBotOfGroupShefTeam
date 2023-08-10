@@ -56,14 +56,15 @@ public class RegisterController : ControllerBase
     public async Task RegisterStepStart(ControllerContext context)
     {
         
-        SendMessage(context, "Enter your Phone Number✍️");
+       await SendMessage(context, "Enter your Phone Number✍️");
         context.Session.Action = nameof(RegisterStepFirst);
+        
     }
 
     public async Task RegisterStepFirst(ControllerContext context)
     {
-        context.Session.RegisterSession.PhoneNumber = context.Update.Message?.Contact?.PhoneNumber;
-        if (string.IsNullOrEmpty(context.Update.Message?.Contact?.PhoneNumber))
+        context.Session.RegisterSession.PhoneNumber = context.Update.Message?.Text;
+        if (string.IsNullOrEmpty(context.Update.Message?.Text))
         {
             await SendMessage(context, "Place Enter Your Phone Number ");
             return;
@@ -81,7 +82,7 @@ public class RegisterController : ControllerBase
             await SendMessage(context, "Place Enter Your Password");
             return;
         }
-        User user = new User()
+        context.Session.User = new User()
         {
             PhoneNumber = context.Session.RegisterSession.PhoneNumber,
             TelegramChatId = context.Update.Message.Chat.Id,
